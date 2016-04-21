@@ -1,0 +1,4 @@
+hub	subregion	region	udn	coef	sitio	atencion	base	bbi_estados	bbi_fhab	cooperativas	om	modulador	controladora	provisioning	topologia	influencia	antena_wimax	influencia_wimax	empresa	max_vel_acc	fecha_cambio_vel	max_vel_acc_old	id_base_open	logidfrom	datefrom	logidto	dateto
+ZZZ	CAPITAL SUR	CAPITAL GBA NORTE Y OESTE	AMBA	0.29398	ALM	CC-MDR-DRC-MDA	ALMAGRO	CONECTADA (METRO)			OM1.ALM1		DAC1.SLO1		S				CABLEVISION	50	2015-06-01 00:00:00.0		4	1	2016-04-07 15:51:14.0	0	
+YYY	CAPITAL NORTE	CAPITAL GBA NORTE Y OESTE	AMBA	0.26386	BON	CC-MDR-DRC-MDA	COLEGIALES	CONECTADA (METRO)			OM1.BON1		DAC1.SLO1		S				CABLEVISION	50	2015-06-01 00:00:00.0		40	1	2016-04-07 15:51:14.0	0	
+XXX	CAPITAL SUR	CAPITAL GBA NORTE Y OESTE	AMBA	0.25397	CAB	CC-MDR-DRC-MDA	BOEDO	CONECTADA (METRO)			OM1.CAB1		DAC1.SLO1		S				CABLEVISION	50	2015-06-01 00:00:00.0		18	1	2016-04-07 15:51:14.0	0	

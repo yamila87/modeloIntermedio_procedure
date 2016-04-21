@@ -1,0 +1,34 @@
+{
+  "files": {
+    "GeoSitios.created": {
+      "cnt": 372,
+      "fname": "x_o_logId5000__2e__2e__2f_repr_5f_db_5f_certa_5f_txt_2f_GeoSitios_2e_created.csv.gz",
+      "outPath": "../var/data/certa_deltas/x_o_logId5000__2e__2e__2f_repr_5f_db_5f_certa_5f_txt_2f_GeoSitios_2e_created.csv.gz",
+      "digest": "66155051A98100FAC0A2E7471DA40CCC",
+      "query": "../repr_db_certa_txt/GeoSitios.created"
+    },
+    "GeoSitios.deleted": {
+      "cnt": 0,
+      "fname": "x_o_logId5000__2e__2e__2f_repr_5f_db_5f_certa_5f_txt_2f_GeoSitios_2e_deleted.csv.gz",
+      "outPath": "../var/data/certa_deltas/x_o_logId5000__2e__2e__2f_repr_5f_db_5f_certa_5f_txt_2f_GeoSitios_2e_deleted.csv.gz",
+      "digest": "1BD796255696E50B4D9AF3607F4B1D69",
+      "query": "../repr_db_certa_txt/GeoSitios.deleted"
+    },
+    "GeoHub.created": {
+      "cnt": 337,
+      "fname": "x_o_logId5000__2e__2e__2f_repr_5f_db_5f_certa_5f_txt_2f_GeoHub_2e_created.csv.gz",
+      "outPath": "../var/data/certa_deltas/x_o_logId5000__2e__2e__2f_repr_5f_db_5f_certa_5f_txt_2f_GeoHub_2e_created.csv.gz",
+      "digest": "A4842B2B5A012133D8A28BF2B91EF317",
+      "query": "../repr_db_certa_txt/GeoHub.created"
+    },
+    "GeoHub.deleted": {
+      "cnt": 0,
+      "fname": "x_o_logId5000__2e__2e__2f_repr_5f_db_5f_certa_5f_txt_2f_GeoHub_2e_deleted.csv.gz",
+      "outPath": "../var/data/certa_deltas/x_o_logId5000__2e__2e__2f_repr_5f_db_5f_certa_5f_txt_2f_GeoHub_2e_deleted.csv.gz",
+      "digest": "244084470C32875BFDF57FCE3D27043C",
+      "query": "../repr_db_certa_txt/GeoHub.deleted"
+    }
+  },
+  "logIdMax": 5000,
+  "logIdMin": 0
+}
