@@ -4,21 +4,33 @@ import java.io.File;
 
 public class  Configuration {
 
+	private static Configuration instance=null; ;
 		
 	private String driver;
+	private String motor;
 	private String host;
 	private String port;
 	private String service;
 	private String user;
 	private String password;
 	private String packageName;
-	
+	private String URL;
 	
 	private String gzPath;
 	private String tmpPath;
+	private String cntPath;
 	
 	private File tmpPathFile;
 	private File gzPathFile;
+	
+	
+	public static Configuration getInstance (){
+		if(instance==null){
+			instance = new Configuration();
+		}
+		return instance;
+	}
+	
 	
 	public String getHost() {
 		return host;
@@ -74,27 +86,6 @@ public class  Configuration {
 	public void setGzPathFile(File gzPathFile) {
 		this.gzPathFile = gzPathFile;
 	}
-	
-	public void setValues (){
-		driver ="oracle.jdbc.driver.OracleDriver";
-		host="10.70.254.197";
-		port="1521";
-		service="dbnav11g";
-		user="NAVCABLE_DESA";
-		password="NAVCABLE_DESA";
-
-
-		gzPath="C:\\Users\\ysalomon\\workspaces\\gestor\\certa_deltas";
-		
-		tmpPath="C:\\Users\\ysalomon\\workspaces\\gestor\\Gestor\\tmp";
-	
-		gzPathFile = new File (gzPath);
-		tmpPathFile = new File (tmpPath);
-		
-		tmpPathFile.mkdir();
-		packageName = "custom_cv"+".";
-		
-	}
 	public String getPackageName() {
 		return packageName;
 	}
@@ -107,6 +98,45 @@ public class  Configuration {
 	public void setTmpPathFile(File tmpPathFile) {
 		this.tmpPathFile = tmpPathFile;
 	}
+	public String getURL() {
+		return URL;
+	}
+	public void setURL(String uRL) {
+		URL = uRL;
+	}
+	public String getCntPath() {
+		return cntPath;
+	}
+	public void setCntPath(String cntPath) {
+		this.cntPath = cntPath;
+	}
+	public String getMotor() {
+		return motor;
+	}
+	public void setMotor(String motor) {
+		this.motor = motor;
+	}
 	
+	public void setValues (){
+		motor="oracle";
+		driver ="oracle.jdbc.driver.OracleDriver";
+		host="10.70.254.197";
+		port="1521";
+		service="dbnav11g";
+		user="NAVCABLE_DESA";
+		password="NAVCABLE_DESA";
+
+		gzPath="C:\\Users\\ysalomon\\workspaces\\gestor\\certa_deltas";		
+		tmpPath="C:\\Users\\ysalomon\\workspaces\\gestor\\Gestor\\tmp";
+	
+		gzPathFile = new File (gzPath);
+		tmpPathFile = new File (tmpPath);
+		
+		tmpPathFile.mkdir();
+		packageName = "custom_cv"+".";
+		URL = "jdbc:"+motor+":thin@"+host+":"+ port +":"+service;
+		
+	}
+
 	
 }

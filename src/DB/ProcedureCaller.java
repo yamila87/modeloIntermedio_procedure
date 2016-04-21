@@ -24,8 +24,7 @@ public class ProcedureCaller {
 	public void setProcedureStringCaller (int paramsQty){
 
 		//"{call custom_cv.geohub(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-		procedureStringCall = new StringBuilder();
-		
+		procedureStringCall = new StringBuilder();		
 		procedureStringCall.append("{call ").append(procedureName).append("(");
 		
 		for(int i = 0 ; i<paramsQty ; i++){
@@ -40,49 +39,37 @@ public class ProcedureCaller {
 	}
 	
 	
-	public boolean executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg){
-		boolean result = false;
-		
-		try {
-			callableStatement = conn.prepareCall(call);
-			
-			for(int i=0;i<arrayColsByReg.size();i++){
-		
-				String[] reg = arrayColsByReg.get(i);	
-				System.out.println("AGREGA REG n:." +i);
-				
-				for(int j=0 ; j<reg.length;j++){
-					System.out.println("PARAM:" + j +" Val: " + reg[j]);
-					callableStatement.setString(j+1,reg[j]);
-					
-				}
-				
-				callableStatement.addBatch();
-			}
-			
-			System.out.println("EJECUTANDO PROC.");
-			callableStatement.executeBatch();
-			
-			result=true;
+	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg) throws SQLException  {
+		callableStatement = conn.prepareCall(call);
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			
-			if(callableStatement!=null){
-				try {
-					System.out.println("CIERRA PROC.");
-					callableStatement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		for(int i=0;i<arrayColsByReg.size();i++){
+
+			String[] reg = arrayColsByReg.get(i);	
+			System.out.println("AGREGA REG n:." +i);
+
+			for(int j=0 ; j<reg.length;j++){
+				System.out.println("PARAM:" + j +" Val: " + reg[j]);
+				callableStatement.setString(j+1,reg[j]);
 			}
+
+			callableStatement.addBatch();
 		}
-	
-		return result;		
+
+		System.out.println("EJECUTANDO PROC.");
+		callableStatement.executeBatch();
 	}
 	
+
+	public void closeCallableStatement(){
+		if(callableStatement!=null){
+			try {
+				System.out.println("CIERRA PROC.");
+				callableStatement.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	
 }
