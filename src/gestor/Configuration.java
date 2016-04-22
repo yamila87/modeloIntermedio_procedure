@@ -20,8 +20,20 @@ public class  Configuration {
 	private String tmpPath;
 	private String cntPath;
 	
+	private int syncDeltaMax;
+	
+	public int getSyncDeltaMax() {
+		return syncDeltaMax;
+	}
+
+
+	public void setSyncDeltaMax(int syncDeltaMax) {
+		this.syncDeltaMax = syncDeltaMax;
+	}
+
 	private File tmpPathFile;
 	private File gzPathFile;
+	private File cntPathFile;
 	
 	
 	public static Configuration getInstance (){
@@ -125,16 +137,22 @@ public class  Configuration {
 		service="dbnav11g";
 		user="NAVCABLE_DESA";
 		password="NAVCABLE_DESA";
+		syncDeltaMax = 5000;
 
 		gzPath="C:\\Users\\ysalomon\\workspaces\\gestor\\certa_deltas";		
 		tmpPath="C:\\Users\\ysalomon\\workspaces\\gestor\\Gestor\\tmp";
-	
+		cntPath="C:\\Users\\ysalomon\\workspaces\\gestor\\var\\run";
+		
 		gzPathFile = new File (gzPath);
 		tmpPathFile = new File (tmpPath);
+		cntPathFile = new File(cntPath);
+		
 		
 		tmpPathFile.mkdir();
+		cntPathFile.mkdir();
+		
 		packageName = "custom_cv"+".";
-		URL = "jdbc:"+motor+":thin@"+host+":"+ port +":"+service;
+		URL = "jdbc:"+motor+":thin:@"+host+":"+ port +":"+service;
 		
 	}
 

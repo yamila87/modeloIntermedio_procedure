@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import utils.CNTManager;
 import utils.CSVreader;
 import utils.GZunzipper;
 import manifest.JManifest;
@@ -25,6 +26,7 @@ public class Main {
 	private static ProcedureCaller caller;
 	private static DBconnector connector;
 	private static ManifestParser manifestParser;
+	private static CNTManager cntManager;
 	
 	private static FilenameFilter jsonFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
@@ -46,6 +48,9 @@ public class Main {
 		unzipper = new GZunzipper();
 		manifestParser = new ManifestParser();
 		connector = new DBconnector();
+		cntManager = new CNTManager();
+		
+		//leer el cnt antes de los manifest 
 		
 		String [] manifests = getManifests();
 		
