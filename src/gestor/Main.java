@@ -41,33 +41,34 @@ public class Main {
 	
 	
 	public static void main(String[] args) {
-		loadConfiguration();
-		
-		reader = new CSVreader();
-		caller = new ProcedureCaller();
-		unzipper = new GZunzipper();
-		manifestParser = new ManifestParser();
-		connector = new DBconnector();
-		cntManager = new CNTManager();
-		
-		//leer el cnt antes de los manifest 
-		
-		String [] manifests = getManifests();
-		
-		for(String manifestStr : manifests){
-			String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
-			JManifest manifest = manifestParser.getJSONManifest(path);
-			
-			System.out.println(manifest.toString());
-			metodoQueHaceTodo(manifest); //TODO ponerle un nombre mas feliz :p			
+
+			if(Configuration.getInstance()!=null){
+
+			reader = new CSVreader();
+			caller = new ProcedureCaller();
+			unzipper = new GZunzipper();
+			manifestParser = new ManifestParser();
+			connector = new DBconnector();
+			cntManager = new CNTManager();
+
+			//leer el cnt antes de los manifest 
+
+			String [] manifests = getManifests();
+
+			for(String manifestStr : manifests){
+				String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
+				JManifest manifest = manifestParser.getJSONManifest(path);
+
+				System.out.println(manifest.toString());
+				metodoQueHaceTodo(manifest); //TODO ponerle un nombre mas feliz :p			
+			}
+		}
+		else {	
+			System.exit(-1);
 		}
 		
 	}
 
-	private static void loadConfiguration (){
-		Configuration.getInstance().setValues();
-	}
-	
    
 	private static String[] getManifests (){
 		String [] manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
