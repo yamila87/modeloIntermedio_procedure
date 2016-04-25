@@ -9,9 +9,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+
+
+import org.apache.log4j.Logger;
 
 import utils.CNTManager;
 import utils.CSVreader;
@@ -24,7 +24,8 @@ import DB.ProcedureCaller;
 
 
 public class Main {
-
+	final static Logger logger = Logger.getLogger(Main.class);
+	
 	private static GZunzipper unzipper;
 	private static CSVreader reader;
 	private static ProcedureCaller caller;
@@ -33,21 +34,10 @@ public class Main {
 	private static CNTManager cntManager;
 	private static int cnt;
 
-	private static final LogManager logManager = LogManager.getLogManager();
-	public static Logger LOG;
 
-	static{
-		try {
-			logManager.readConfiguration(new FileInputStream("logconfig.properties"));		
-            LOG =  Logger.getLogger("logger");
-		} catch (IOException exception) {
-			System.out.println("Error in loading  log configuration"+exception.getMessage());
-		}
-	}
 	
-
 	public static void main(String[] args) {
-
+		
 		if(Configuration.getInstance()!=null){
 
 			reader = new CSVreader();
@@ -61,7 +51,8 @@ public class Main {
 			getManifests();
 			System.exit(0);
 		}
-		else {	
+		else {
+			LOG.
 			System.exit(-1);
 		}
 		
