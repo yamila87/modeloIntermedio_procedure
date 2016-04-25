@@ -38,10 +38,6 @@ public class Main {
 	
 	public static void main(String[] args) {
 		 PropertyConfigurator.configure("logconfig.properties");
-		
-		 logger.info("eso es info");
-		 
-		 System.exit(-1);
 		 
 		if(Configuration.getInstance()!=null){
 
