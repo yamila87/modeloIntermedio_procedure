@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
-import org.apache.log4j.Logger;
+import org.apache.log4j.Logger; 
+import org.apache.log4j.PropertyConfigurator;
 
 import utils.CNTManager;
 import utils.CSVreader;
@@ -37,7 +37,12 @@ public class Main {
 
 	
 	public static void main(String[] args) {
+		 PropertyConfigurator.configure("logconfig.properties");
 		
+		 logger.info("eso es info");
+		 
+		 System.exit(-1);
+		 
 		if(Configuration.getInstance()!=null){
 
 			reader = new CSVreader();
@@ -52,7 +57,6 @@ public class Main {
 			System.exit(0);
 		}
 		else {
-			LOG.
 			System.exit(-1);
 		}
 		
