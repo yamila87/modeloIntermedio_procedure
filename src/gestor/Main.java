@@ -1,12 +1,17 @@
 package gestor;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import utils.CNTManager;
 import utils.CSVreader;
@@ -27,22 +32,23 @@ public class Main {
 	private static ManifestParser manifestParser;
 	private static CNTManager cntManager;
 	private static int cnt;
-	
-	private static FilenameFilter jsonFilter = new FilenameFilter() {
-		public boolean accept(File dir, String name) {
-			String lowercaseName = name.toLowerCase();
-			if (lowercaseName.endsWith("logid"+cnt+"_manifest.json")) {
-				return true;
-			} else {
-				return false;
-			}
+
+	private static final LogManager logManager = LogManager.getLogManager();
+	public static Logger LOG;
+
+	static{
+		try {
+			logManager.readConfiguration(new FileInputStream("logconfig.properties"));		
+            LOG =  Logger.getLogger("logger");
+		} catch (IOException exception) {
+			System.out.println("Error in loading  log configuration"+exception.getMessage());
 		}
-	};
+	}
 	
-	
+
 	public static void main(String[] args) {
 
-			if(Configuration.getInstance()!=null){
+		if(Configuration.getInstance()!=null){
 
 			reader = new CSVreader();
 			caller = new ProcedureCaller();
@@ -51,9 +57,9 @@ public class Main {
 			connector = new DBconnector();
 			cntManager = new CNTManager();
 
-			//leer el cnt antes de los manifest 
 			cnt =  cntManager.getCnt();
 			getManifests();
+			System.exit(0);
 		}
 		else {	
 			System.exit(-1);
@@ -71,6 +77,9 @@ public class Main {
 			System.out.println(manifest.toString());
 			 if(loadProcess(manifest)){
 				 cntManager.updateCnt();
+			 }else{
+				 System.out.println("fallo ." + path);
+				 break;
 			 } 		
 		}
 	}
@@ -129,5 +138,19 @@ public class Main {
 			}
 		}	
 		return result;
-	}	
+	}
+	
+	
+	private static FilenameFilter jsonFilter = new FilenameFilter() {
+		public boolean accept(File dir, String name) {
+			String lowercaseName = name.toLowerCase();
+			if (lowercaseName.endsWith("logid"+cnt+"_manifest.json")) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	};
+	
+	
 }
