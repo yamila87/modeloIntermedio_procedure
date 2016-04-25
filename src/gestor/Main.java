@@ -20,18 +20,18 @@ import DB.ProcedureCaller;
 
 public class Main {
 
-	//private static Configuration conf;
 	private static GZunzipper unzipper;
 	private static CSVreader reader;
 	private static ProcedureCaller caller;
 	private static DBconnector connector;
 	private static ManifestParser manifestParser;
 	private static CNTManager cntManager;
+	private static int cnt;
 	
 	private static FilenameFilter jsonFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
 			String lowercaseName = name.toLowerCase();
-			if (lowercaseName.endsWith(".json")) {
+			if (lowercaseName.endsWith("logid"+cnt+"_manifest.json")) {
 				return true;
 			} else {
 				return false;
@@ -52,16 +52,8 @@ public class Main {
 			cntManager = new CNTManager();
 
 			//leer el cnt antes de los manifest 
-
-			String [] manifests = getManifests();
-
-			for(String manifestStr : manifests){
-				String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
-				JManifest manifest = manifestParser.getJSONManifest(path);
-
-				System.out.println(manifest.toString());
-				metodoQueHaceTodo(manifest); //TODO ponerle un nombre mas feliz :p			
-			}
+			cnt =  cntManager.getCnt();
+			getManifests();
 		}
 		else {	
 			System.exit(-1);
@@ -70,12 +62,21 @@ public class Main {
 	}
 
    
-	private static String[] getManifests (){
+	private static void getManifests (){
 		String [] manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
-		return manifestFiles;
+		for(String manifestStr : manifestFiles){
+			String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
+			JManifest manifest = manifestParser.getJSONManifest(path);
+
+			System.out.println(manifest.toString());
+			 if(loadProcess(manifest)){
+				 cntManager.updateCnt();
+			 } 		
+		}
 	}
 	
-	private static void metodoQueHaceTodo (JManifest manifest){
+	private static boolean loadProcess (JManifest manifest){
+		boolean result= false;
 		Map<String, JSManifestItems> map = manifest.getFiles();
 		
 		Connection conn =null;
@@ -103,6 +104,7 @@ public class Main {
 			}
 			
 			conn.commit();
+			result=true;
 			
 		}catch(SQLException e){
 			e.printStackTrace();
@@ -126,6 +128,6 @@ public class Main {
 				}
 			}
 		}	
-		
+		return result;
 	}	
 }

@@ -42,7 +42,7 @@ public class CNTManager {
 					}
 				}
 			}else{
-				cnt=0;
+				cnt=Configuration.getInstance().getSyncDeltaMax();
 			}	
 			
 		return cnt;		
