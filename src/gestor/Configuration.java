@@ -22,13 +22,13 @@ public class  Configuration {
 	
 	private String gzPath="";
 	private String tmpPath="";
-	private String cntPath="";	
+	private String cntPath="";
 	private int syncDeltaMax;
 	
 	private transient File tmpPathFile;
 	private transient File gzPathFile;
 	private transient File cntPathFile;
-	
+
 	public static Configuration getInstance (){
 		if(instance==null){
 			String fileStr = "config.json";
@@ -84,7 +84,6 @@ public class  Configuration {
 		return URL;
 	}
 
-
 	public String getGzPath() {
 		return gzPath;
 	}
@@ -112,6 +111,7 @@ public class  Configuration {
 	public File getCntPathFile() {
 		return cntPathFile;
 	}
+
 
 	private void setValues (){
 		gzPathFile = new File (gzPath);

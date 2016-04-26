@@ -1,9 +1,7 @@
 package gestor;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,12 +23,9 @@ import DB.ProcedureCaller;
 
 public class Main {
 	final static Logger logger = Logger.getLogger(Main.class);
-	
-	private static GZunzipper unzipper;
-	private static CSVreader reader;
+
 	private static ProcedureCaller caller;
 	private static DBconnector connector;
-	private static ManifestParser manifestParser;
 	private static CNTManager cntManager;
 	private static int cnt;
 
@@ -41,10 +36,7 @@ public class Main {
 		 
 		if(Configuration.getInstance()!=null){
 
-			reader = new CSVreader();
 			caller = new ProcedureCaller();
-			unzipper = new GZunzipper();
-			manifestParser = new ManifestParser();
 			connector = new DBconnector();
 			cntManager = new CNTManager();
 
@@ -63,7 +55,7 @@ public class Main {
 		String [] manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
 		for(String manifestStr : manifestFiles){
 			String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
-			JManifest manifest = manifestParser.getJSONManifest(path);
+			JManifest manifest = ManifestParser.getJSONManifest(path);
 
 			System.out.println(manifest.toString());
 			 if(loadProcess(manifest)){
@@ -91,8 +83,8 @@ public class Main {
 				String gzPath = Configuration.getInstance().getGzPath()+File.separator + gzName;
 				String outPath = Configuration.getInstance().getTmpPath()+File.separator+gzName.replace(".gz", "");
 				
-				if(unzipper.gunzipGZ(gzPath, outPath )){
-					ArrayList<String[]> array = reader.getParsedContent(outPath);
+				if(GZunzipper.gunzipGZ(gzPath, outPath )){
+					ArrayList<String[]> array = CSVreader.getParsedContent(outPath);
 					if(array.size()>=1){
 				
 						int qtyParams = array.get(0).length;					

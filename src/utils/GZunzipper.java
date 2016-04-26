@@ -8,7 +8,7 @@ import java.util.zip.GZIPInputStream;
 public class GZunzipper {
 
 	
-	public boolean gunzipGZ(String gzPath,String tmpPath){
+	public static boolean gunzipGZ(String gzPath,String tmpPath){
 		 boolean result = false;
 	     byte[] buffer = new byte[1024];
 	     GZIPInputStream gzis = null;

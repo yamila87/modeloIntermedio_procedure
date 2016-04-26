@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class CSVreader {//csvutils
 	
 
-	private ArrayList<String> getFileContent ( String fileStr){
+	private static ArrayList<String> getFileContent ( String fileStr){
 		
 		BufferedReader br = null;
 		String currentLine = null;
@@ -44,7 +44,7 @@ public class CSVreader {//csvutils
 	}
 	
 	
-	private  ArrayList<String[]> getArray (ArrayList<String> arrayLines){		 
+	private static  ArrayList<String[]> getArray (ArrayList<String> arrayLines){		 
 		ArrayList<String[]> valuesList = new  ArrayList<String[]>();
 		String reg ="[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+\\.0$";
 		
@@ -63,7 +63,7 @@ public class CSVreader {//csvutils
 		return valuesList;
 	}
 	
-	public  ArrayList<String[]> getParsedContent ( String fileStr){
+	public static ArrayList<String[]> getParsedContent ( String fileStr){
 		return getArray(getFileContent (fileStr));
 	}
 }
