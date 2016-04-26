@@ -66,22 +66,26 @@ public class Main {
 		
 		logger.info("Archivos manifest encontrados: " + manifestFiles.length);
 		
-		for(String manifestStr : manifestFiles){
-			String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
+		while(manifestFiles.length>0 && !error){
+			for(String manifestStr : manifestFiles){
+				String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
+				
+				logger.info("Leyendo archivo: " + manifestStr);
+				
+				JManifest manifest = ManifestParser.getJSONManifest(path);
+	
+				logger.trace(manifestStr+": "+manifest.toString());
+				 
+				if(loadProcess(manifest)){
+					 cntManager.updateCnt();
+					 manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
+				 }else{
+					logger.error("Error al procesar, ultimo LOGID: "+cnt+" ,Archivo:"+ manifestStr);
+					error=true;
+					 break;
+				 } 		
+			}
 			
-			logger.info("Leyendo archivo: " + manifestStr);
-			
-			JManifest manifest = ManifestParser.getJSONManifest(path);
-
-			logger.trace(manifestStr+": "+manifest.toString());
-			 
-			if(loadProcess(manifest)){
-				 cntManager.updateCnt();
-			 }else{
-				logger.error("Error al procesar, ultimo LOGID: "+cnt+" ,Archivo:"+ manifestStr);
-				error=true;
-				 break;
-			 } 		
 		}
 	}
 	
@@ -168,6 +172,8 @@ public class Main {
 		return result;
 	}
 	
+	
+
 	
 	private static FilenameFilter jsonFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {

@@ -5,8 +5,10 @@ import gestor.Configuration;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class DBconnector {
+import org.apache.log4j.Logger;
 
+public class DBconnector {
+	final static Logger logger = Logger.getLogger(DBconnector.class);
 	
 	 public  Connection getConnection(){ 		 
 		 Connection conn = null;
@@ -14,16 +16,12 @@ public class DBconnector {
 			 conn = DriverManager.getConnection(Configuration.getInstance().getURL(),
 					 							Configuration.getInstance().getUser(),
 					 							Configuration.getInstance().getPassword());
-			 if(conn != null)
-			 { 
-				 System.out.println("Successfully connected.");
-			 }
-			 else{ 
-				 System.out.println("Failed to connect.");
-			 } 
+
+			logger.debug("Conectado");
+ 
 		 }
 		 catch(Exception e){ 
-			 e.printStackTrace();
+			logger.error("Error al conectarse a la base: " + Configuration.getInstance().getURL(),e);
 		 } 	
 		 return conn;
 	 } 

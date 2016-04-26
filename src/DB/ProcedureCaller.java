@@ -5,7 +5,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 public class ProcedureCaller {
+	final static Logger logger = Logger.getLogger(ProcedureCaller.class);
+	
 	
 	private CallableStatement callableStatement = null;
 	private String procedureName ="";
@@ -34,7 +38,7 @@ public class ProcedureCaller {
 		
 		procedureStringCall.deleteCharAt(procedureStringCall.lastIndexOf(","));
 		procedureStringCall.append(")}");
-
+		logger.debug("Declaracion: " + procedureStringCall.toString());
 		call = procedureStringCall.toString();
 	}
 	
@@ -45,17 +49,18 @@ public class ProcedureCaller {
 		for(int i=0;i<arrayColsByReg.size();i++){
 
 			String[] reg = arrayColsByReg.get(i);	
-			System.out.println("AGREGA REG n:." +i);
+			logger.trace("Agrega registro n:." +i);
 
 			for(int j=0 ; j<reg.length;j++){
-				System.out.println("PARAM:" + j +" Val: " + reg[j]);
+				logger.trace("PARAM:" + j +" Val: " + reg[j]);
 				callableStatement.setString(j+1,reg[j]);
 			}
 
+			logger.trace("Agregando Batch...");
 			callableStatement.addBatch();
 		}
 
-		System.out.println("EJECUTANDO PROC.");
+		logger.debug("Ejecutando proceso " + procedureName);
 		callableStatement.executeBatch();
 	}
 	
@@ -63,11 +68,9 @@ public class ProcedureCaller {
 	public void closeCallableStatement(){
 		if(callableStatement!=null){
 			try {
-				System.out.println("CIERRA PROC.");
 				callableStatement.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error al cerrar declaracion ",e);
 			}
 		}
 	}
