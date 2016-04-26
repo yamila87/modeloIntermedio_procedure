@@ -4,14 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import org.apache.log4j.Logger;
+
 
 public class ManifestParser {
 
+	final static Logger logger = Logger.getLogger(ManifestParser.class);
+	
 	public static JManifest getJSONManifest(String fileName) {
 
 		BufferedReader br = null;		
@@ -24,7 +24,8 @@ public class ManifestParser {
 		try {
 			br = new BufferedReader(new FileReader(fileName));
 			while ((currentLine = br.readLine()) != null) {
-				str.append(currentLine);		
+				str.append(currentLine);
+				logger.trace(currentLine);
 			}
 	
 			String strFiles = str.substring(str.indexOf("{")+1, str.lastIndexOf("}"));
@@ -53,25 +54,23 @@ public class ManifestParser {
 				items.setOutPath(values[2].split(":")[1]);
 				items.setDigest(values[3].split(":")[1]);
 				items.setQuery(values[4].split(":")[1]);
-			//probar que pasa si viene sin valores ;P
+			//TODO probar que pasa si viene sin valores ;P
 				
 				m.addFiles(key, items);	
 			}
+			logger.debug("Cantidad de objetos file: " + objs.length);
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error al parsear "+ fileName,e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error al parsear"+ fileName,e);
 		}finally{
 			
 			if(br!=null){
 				try {
 					br.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error al parsear"+ fileName,e);
 				}
 			}
 		}

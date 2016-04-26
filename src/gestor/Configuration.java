@@ -4,10 +4,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+import org.apache.log4j.Logger;
+
 import com.google.gson.Gson;
 
 public class  Configuration {
 
+	final static Logger logger = Logger.getLogger(Configuration.class);
+	
 	private static Configuration instance=null; ;
 		
 	private String driver="";
@@ -35,13 +39,15 @@ public class  Configuration {
 			Gson gson = new Gson ();		
 			BufferedReader br = null;
 			try {
+				logger.debug("Leyendo configuracion...");
 				br = new BufferedReader(new FileReader(fileStr));
+				logger.debug("Parseando json...");
 				instance = gson.fromJson(br, Configuration.class);
 				instance.setValues();
 			
+				logger.trace("Config: " + gson.toJson(instance));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error al cargar configuracion ",e);
 			}
 		}
 		return instance;
@@ -123,6 +129,8 @@ public class  Configuration {
 		
 		packageName = "custom_cv"+".";
 		URL = "jdbc:"+motor+":thin:@"+host+":"+ port +":"+service;  
+		
+		logger.debug("Directorios creados");
 	}
 
 	

@@ -28,11 +28,12 @@ public class Main {
 	private static DBconnector connector;
 	private static CNTManager cntManager;
 	private static int cnt;
-
+	private static boolean error=false;
 
 	
 	public static void main(String[] args) {
 		 PropertyConfigurator.configure("logconfig.properties");
+		 logger.info("Iniciando proceso..");
 		 
 		if(Configuration.getInstance()!=null){
 
@@ -41,10 +42,19 @@ public class Main {
 			cntManager = new CNTManager();
 
 			cnt =  cntManager.getCnt();
+			logger.info("Ultimo logid encontrado: " + cnt);
 			getManifests();
+			
+			if(error){			
+				logger.info("Finalizado con errores. Ultimo logid: " + cnt);
+			}
+			else{
+				logger.info("Finalizado con exito. Ultimo logid: " + cnt);
+			}
 			System.exit(0);
 		}
 		else {
+			logger.fatal("Error al cargar configuracion");
 			System.exit(-1);
 		}
 		
@@ -53,61 +63,97 @@ public class Main {
    
 	private static void getManifests (){
 		String [] manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
+		
+		logger.info("Archivos manifest encontrados: " + manifestFiles.length);
+		
 		for(String manifestStr : manifestFiles){
 			String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
+			
+			logger.info("Leyendo archivo: " + manifestStr);
+			
 			JManifest manifest = ManifestParser.getJSONManifest(path);
 
-			System.out.println(manifest.toString());
-			 if(loadProcess(manifest)){
+			logger.trace(manifestStr+": "+manifest.toString());
+			 
+			if(loadProcess(manifest)){
 				 cntManager.updateCnt();
 			 }else{
-				 System.out.println("fallo ." + path);
+				logger.error("Error al procesar, ultimo LOGID: "+cnt+" ,Archivo:"+ manifestStr);
+				error=true;
 				 break;
 			 } 		
 		}
 	}
 	
 	private static boolean loadProcess (JManifest manifest){
-		boolean result= false;
+		boolean result= false;	
 		Map<String, JSManifestItems> map = manifest.getFiles();
 		
 		Connection conn =null;
-		try{				
+		
+		String procName="";
+		String gzName="";
+		
+		try{
+			logger.debug("Obteniendo conexion...");
+			
 			conn= connector.getConnection();
 			conn.setAutoCommit(false);
 			
 			for(Entry <String, JSManifestItems> entry : map.entrySet()){
-				String procName = Configuration.getInstance().getPackageName()+entry.getKey().split("\\.")[0].toLowerCase();
-				String gzName = entry.getValue().getFname();
+				
+				procName = Configuration.getInstance().getPackageName()+entry.getKey().split("\\.")[0].toLowerCase();
+				gzName = entry.getValue().getFname();
+				
+				logger.trace("Procesando: " + gzName);
+				logger.debug("ProcedureName:"+procName);
 				
 				String gzPath = Configuration.getInstance().getGzPath()+File.separator + gzName;
 				String outPath = Configuration.getInstance().getTmpPath()+File.separator+gzName.replace(".gz", "");
 				
 				if(GZunzipper.gunzipGZ(gzPath, outPath )){
 					ArrayList<String[]> array = CSVreader.getParsedContent(outPath);
+					logger.trace("Registros encontrados: " + array.size());
+					
 					if(array.size()>=1){
 				
-						int qtyParams = array.get(0).length;					
+						int qtyParams = array.get(0).length;
+						logger.trace("Columnas encontradas: " + qtyParams);
+						
 						caller.setProcedureName(procName);
 						caller.setProcedureStringCaller(qtyParams);
+						
+						logger.trace("Ejecutando procedure");
 						caller.executeProcedure(conn, array);	
-					}	
-				}				
+						
+						conn.commit();
+						logger.trace("Commit , procedure: " + procName);
+					}else{
+						logger.warn("Archivo vacio: " + gzName);
+					}
+
+					result=true;			
+				}else{
+					logger.error("Error al descomprimir archivo: " + gzName);
+				}	
+				
+				new File(outPath).delete();
 			}
-			
-			conn.commit();
-			result=true;
-			
+				
 		}catch(SQLException e){
-			e.printStackTrace();
+			logger.error("Error al ejecutar: " + procName , e);
+			logger.warn("Realizando rollback...");
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.fatal("Error al realizar el rollback".toUpperCase(),e1);
+				//TODO y si llega aca ???
 			}
 			
-		}finally{
+		}catch(Exception e){
+			logger.error("Error en: " + procName+" ,Archivo: "+gzName);
+		}
+		finally{
 			caller.closeCallableStatement();
 			
 			if(conn!=null){
@@ -115,8 +161,7 @@ public class Main {
 					conn.setAutoCommit(true);
 					conn.close();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 		}	

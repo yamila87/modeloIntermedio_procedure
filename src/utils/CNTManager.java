@@ -10,8 +10,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class CNTManager {
+import org.apache.log4j.Logger;
 
+public class CNTManager {
+	final static Logger logger = Logger.getLogger(CNTManager.class);
+	
 	private File cntFile;
 	private String cntName = "SyncProc.cnt";
 	private String cntFilePath=Configuration.getInstance().getCntPath()+File.separator+cntName;
@@ -27,21 +30,20 @@ public class CNTManager {
 				try {
 					br = new BufferedReader(new FileReader(cntFile));
 					cnt=Integer.valueOf(br.readLine().trim());
+					logger.debug("Valor encontrado:"+cnt);
 				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error al leer cnt",e);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error al leer cnt",e);
 				}finally{
 					try {
 						br.close();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						logger.error("Error al leer cnt",e);
 					}
 				}
 			}else{
+				logger.warn("No se encontro el archivo SyncProc.cnt, se creara el mismo");
 				cnt=Configuration.getInstance().getSyncDeltaMax();
 			}	
 			
@@ -54,18 +56,17 @@ public class CNTManager {
 		
 		BufferedWriter bw = null;
 		try {
+			logger.debug("Actualizando cnt a: "+ cnt);
 			bw = new BufferedWriter(new FileWriter(cntFilePath));
 			bw.write(cnt);
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error al actualizar cnt",e);
 		}finally{
 			try {
 				bw.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error al actualizar cnt",e);
 			}			
 		}				
 	}

@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 public class CSVreader {//csvutils
-	
+	final static Logger logger = Logger.getLogger(CSVreader.class);
 
 	private static ArrayList<String> getFileContent ( String fileStr){
+		logger.debug("Archivo a leer: " + fileStr);
 		
 		BufferedReader br = null;
 		String currentLine = null;
@@ -20,22 +23,20 @@ public class CSVreader {//csvutils
 			
 			while ((currentLine = br.readLine()) != null) {
 				contentLines.add(currentLine);
+				logger.trace(currentLine);
 			}
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error al leer: " + fileStr ,e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error al leer: " + fileStr ,e);
 		}finally{
 			
 			if(br!=null){
 				try {
 					br.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error al leer: " + fileStr ,e);
 				}
 			}
 		}
