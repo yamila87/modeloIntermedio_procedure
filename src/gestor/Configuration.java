@@ -124,8 +124,8 @@ public class  Configuration {
 		tmpPathFile = new File (tmpPath);
 		cntPathFile = new File(cntPath);
 				
-		tmpPathFile.mkdir();
-		cntPathFile.mkdir();
+		tmpPathFile.mkdirs();
+		cntPathFile.mkdirs();
 		
 		packageName = "custom_cv"+".";
 		URL = "jdbc:"+motor+":thin:@"+host+":"+ port +":"+service;  
