@@ -137,8 +137,6 @@ public class Main {
 						logger.trace("Ejecutando procedure");
 						caller.executeProcedure(conn, array);	
 						
-						conn.commit();
-						logger.trace("Commit , procedure: " + procName);
 					}else{
 						logger.warn("Archivo vacio: " + gzName);
 					}
@@ -150,10 +148,14 @@ public class Main {
 				
 				new File(outPath).delete();
 			}
+			
+			conn.commit();
+			logger.trace("Commit, manifest");
 				
 		}catch(SQLException e){
-			logger.error("Error al ejecutar: " + procName , e);
+			logger.error("Error al procesar manifest", e);
 			logger.warn("Realizando rollback...");
+			result = false;
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
@@ -162,6 +164,7 @@ public class Main {
 			}
 			
 		}catch(Exception e){
+			result = false;
 			logger.error("Error en: " + procName+" ,Archivo: "+gzName);
 		}
 		finally{
