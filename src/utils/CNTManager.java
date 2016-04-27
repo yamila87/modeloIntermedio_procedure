@@ -63,7 +63,7 @@ public class CNTManager {
 		try {
 			logger.debug("Actualizando cnt a: "+ cnt);
 			bw = new BufferedWriter(new FileWriter(cntFilePath));
-			bw.write(cnt);
+			bw.write(String.valueOf(cnt));
 		} catch (IOException e) {
 			logger.error("Error al actualizar cnt",e);
 		}finally{
