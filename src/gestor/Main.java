@@ -85,8 +85,10 @@ public class Main {
 	
 	private static String existFile (){
 		String [] manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
-		for(int i = 0 ; i<manifestFiles.length;i++){
-			if(manifestFiles[i].contains(String.valueOf( CNTManager.getInstance().getCnt()))){
+		for(int i = 0 ; i<manifestFiles.length;i++)
+		{ //"logid"+cnt+"_
+			String regex="logid"+String.valueOf( CNTManager.getInstance().getCnt())+"_";
+			if(manifestFiles[i].toLowerCase().contains(regex)){
 				return manifestFiles[i];
 			}
 		}
