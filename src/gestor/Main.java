@@ -62,31 +62,37 @@ public class Main {
 
    
 	private static void getManifests (){
-		String [] manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
-		
-		logger.info("Archivos manifest encontrados: " + manifestFiles.length);
-		
-		while(manifestFiles.length>0 && !error){
-			for(String manifestStr : manifestFiles){
-				String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
-				
-				logger.info("Leyendo archivo: " + manifestStr);
-				
-				JManifest manifest = ManifestParser.getJSONManifest(path);
-	
-				logger.trace(manifestStr+": "+manifest.toString());
-				 
-				if(loadProcess(manifest)){
-					 cntManager.updateCnt();
-					 manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
-				 }else{
-					logger.error("Error al procesar, ultimo LOGID: "+cnt+" ,Archivo:"+ manifestStr);
-					error=true;
-					 break;
-				 } 		
-			}
-			
+
+		String manifestStr=existFile();
+		while (manifestStr!=null && !error){
+			String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
+
+			logger.info("Leyendo archivo: " + manifestStr);
+
+			JManifest manifest = ManifestParser.getJSONManifest(path);
+
+			logger.trace(manifestStr+": "+manifest.toString());
+
+			if(loadProcess(manifest)){
+				cntManager.updateCnt();
+				manifestStr=existFile();
+			}else{
+				logger.error("Error al procesar, ultimo LOGID: "+cnt+" ,Archivo:"+ manifestStr);
+				error=true;
+				break;
+			} 				
 		}
+	}
+	
+	private static String existFile (){
+		String [] manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
+		for(int i = 0 ; i<manifestFiles.length;i++){
+			if(manifestFiles[i].contains(String.valueOf(cnt))){
+				return manifestFiles[i];
+			}
+		}
+		
+		return null;
 	}
 	
 	private static boolean loadProcess (JManifest manifest){
@@ -178,7 +184,8 @@ public class Main {
 	private static FilenameFilter jsonFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
 			String lowercaseName = name.toLowerCase();
-			if (lowercaseName.endsWith("logid"+cnt+"_manifest.json")) {
+			//if (lowercaseName.endsWith("logid"+cnt+"_manifest.json")) {
+			if (lowercaseName.endsWith("manifest.json")) {
 				return true;
 			} else {
 				return false;
