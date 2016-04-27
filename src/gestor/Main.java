@@ -26,8 +26,7 @@ public class Main {
 
 	private static ProcedureCaller caller;
 	private static DBconnector connector;
-	private static CNTManager cntManager;
-	private static int cnt;
+//	private static int cnt;
 	private static boolean error=false;
 
 	
@@ -39,17 +38,17 @@ public class Main {
 
 			caller = new ProcedureCaller();
 			connector = new DBconnector();
-			cntManager = new CNTManager();
-
-			cnt =  cntManager.getCnt();
-			logger.info("Ultimo logid encontrado: " + cnt);
+		
+			CNTManager.getInstance().readCnt();
+			
+			logger.info("Ultimo logid guardado: " + CNTManager.getInstance().getCnt());
 			getManifests();
 			
 			if(error){			
-				logger.info("Finalizado con errores. Ultimo logid: " + cnt);
+				logger.info("Finalizado con errores. Ultimo logid: " +  CNTManager.getInstance().getCnt());
 			}
 			else{
-				logger.info("Finalizado con exito. Ultimo logid: " + cnt);
+				logger.info("Finalizado con exito. Ultimo logid: " +  CNTManager.getInstance().getCnt());
 			}
 			System.exit(0);
 		}
@@ -74,10 +73,10 @@ public class Main {
 			logger.trace(manifestStr+": "+manifest.toString());
 
 			if(loadProcess(manifest)){
-				cntManager.updateCnt();
+				 CNTManager.getInstance().updateCnt();
 				manifestStr=existFile();
 			}else{
-				logger.error("Error al procesar, ultimo LOGID: "+cnt+" ,Archivo:"+ manifestStr);
+				logger.error("Error al procesar, ultimo LOGID: "+ CNTManager.getInstance().getCnt()+" ,Archivo:"+ manifestStr);
 				error=true;
 				break;
 			} 				
@@ -87,7 +86,7 @@ public class Main {
 	private static String existFile (){
 		String [] manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
 		for(int i = 0 ; i<manifestFiles.length;i++){
-			if(manifestFiles[i].contains(String.valueOf(cnt))){
+			if(manifestFiles[i].contains(String.valueOf( CNTManager.getInstance().getCnt()))){
 				return manifestFiles[i];
 			}
 		}

@@ -18,12 +18,19 @@ public class CNTManager {
 	private File cntFile;
 	private String cntName = "SyncProc.cnt";
 	private String cntFilePath=Configuration.getInstance().getCntPath()+File.separator+cntName;
-	
+	private static CNTManager instance;
 	private int cnt; 
 	
+	public static CNTManager getInstance(){
+		if(instance==null){
+			instance = new CNTManager();
+		}
+		
+		return instance;
+	} 
 	
 	
-	public int getCnt (){
+	public void readCnt (){
 			cntFile = new File(cntFilePath);
 			if(cntFile.exists()){
 				BufferedReader br = null;
@@ -45,9 +52,7 @@ public class CNTManager {
 			}else{
 				logger.warn("No se encontro el archivo SyncProc.cnt, se creara el mismo");
 				cnt=Configuration.getInstance().getSyncDeltaMax();
-			}	
-			
-		return cnt;		
+			}				
 	}
 	
 
@@ -59,7 +64,6 @@ public class CNTManager {
 			logger.debug("Actualizando cnt a: "+ cnt);
 			bw = new BufferedWriter(new FileWriter(cntFilePath));
 			bw.write(cnt);
-			
 		} catch (IOException e) {
 			logger.error("Error al actualizar cnt",e);
 		}finally{
@@ -71,4 +75,7 @@ public class CNTManager {
 		}				
 	}
 	
+	public int getCnt(){
+		return cnt;
+	}
 }
