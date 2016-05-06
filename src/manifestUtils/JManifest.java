@@ -1,4 +1,4 @@
-package manifest;
+package manifestUtils;
 
 import java.util.HashMap;
 import java.util.Map;

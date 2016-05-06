@@ -1,7 +1,5 @@
 package utils;
 
-import gestor.Configuration;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+
+import procedureExecutor.Configuration;
 
 public class CNTManager {
 	final static Logger logger = Logger.getLogger(CNTManager.class);

@@ -11,13 +11,22 @@ import org.apache.log4j.Logger;
 
 public class CSVreader {//csvutils
 	final static Logger logger = Logger.getLogger(CSVreader.class);
+	private  BufferedReader br;
+	private  String currentLine;
+	private  ArrayList<String> contentLines;
+	private  ArrayList<String[]> valuesList;
 
-	private static ArrayList<String> getFileContent ( String fileStr){
+	private final String reg ="[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+\\.0$";
+	private final String splitBy="\t";
+	private final String toReplace ="\\.[0-9]+";
+	
+
+	private  ArrayList<String> getFileContent ( String fileStr){
 		logger.debug("Archivo a leer: " + fileStr);
 		
-		BufferedReader br = null;
-		String currentLine = null;
-		ArrayList<String> contentLines = new ArrayList<String>();
+		br = null;
+		currentLine = null;
+		contentLines = new ArrayList<String>();
 		try {
 			br = new BufferedReader(new FileReader(fileStr));
 			
@@ -45,17 +54,15 @@ public class CSVreader {//csvutils
 	}
 	
 	
-	private static  ArrayList<String[]> getArray (ArrayList<String> arrayLines){		 
-		ArrayList<String[]> valuesList = new  ArrayList<String[]>();
-		String reg ="[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+\\.0$";
+	private ArrayList<String[]> getArray (ArrayList<String> arrayLines){		 
+		valuesList = new  ArrayList<String[]>();	
 		
 		for (int i = 1 ; i<arrayLines.size();i++){
-			String[] colValus = arrayLines.get(i).split("\t");			
-			for(int j=0; j<colValus.length;j++){
-				String value = colValus[j];
+			String[] colValus = arrayLines.get(i).split(splitBy);			
+			for(int j=0; j<colValus.length;j++){ //TODO arreglarlo desde el query
 
-				if(Pattern.matches(reg, value)){
-					String aux =  colValus[j].replaceAll("\\.[0-9]+","");				
+				if(Pattern.matches(reg,  colValus[j])){
+					String aux =  colValus[j].replaceAll(toReplace,"");				
 					colValus[j] = aux;
 				}
 			}
@@ -64,7 +71,7 @@ public class CSVreader {//csvutils
 		return valuesList;
 	}
 	
-	public static ArrayList<String[]> getParsedContent ( String fileStr){
+	public ArrayList<String[]> getParsedContent ( String fileStr){
 		return getArray(getFileContent (fileStr));
 	}
 }

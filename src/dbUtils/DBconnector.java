@@ -1,17 +1,18 @@
-package DB;
-
-import gestor.Configuration;
+package dbUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.apache.log4j.Logger;
 
+import procedureExecutor.Configuration;
+
 public class DBconnector {
 	final static Logger logger = Logger.getLogger(DBconnector.class);
+	private  Connection conn ;
 	
 	 public  Connection getConnection(){ 		 
-		 Connection conn = null;
+		conn = null;
 		 try{ 
 			 conn = DriverManager.getConnection(Configuration.getInstance().getURL(),
 					 							Configuration.getInstance().getUser(),

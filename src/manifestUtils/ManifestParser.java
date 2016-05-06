@@ -1,4 +1,4 @@
-package manifest;
+package manifestUtils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -12,14 +12,19 @@ public class ManifestParser {
 
 	final static Logger logger = Logger.getLogger(ManifestParser.class);
 	
-	public static JManifest getJSONManifest(String fileName) {
+	private BufferedReader br = null;		
+	private StringBuilder str = new StringBuilder ();
+	private JManifest m = new JManifest();
+	private JSManifestItems items = null;
+	private String currentLine;
+	
+	public JManifest getJSONManifest(String fileName) {
 
-		BufferedReader br = null;		
-		StringBuilder str = new StringBuilder ();
-		JManifest m = new JManifest();
-		JSManifestItems items = null;
-		
-		String currentLine = "";
+		br = null;		
+		str = new StringBuilder ();
+		m = new JManifest();
+		items = null;
+		currentLine = "";
 		
 		try {
 			br = new BufferedReader(new FileReader(fileName));

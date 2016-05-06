@@ -1,4 +1,4 @@
-package manifest;
+package manifestUtils;
 
 public class JSManifestItems {
 	 private String cnt;

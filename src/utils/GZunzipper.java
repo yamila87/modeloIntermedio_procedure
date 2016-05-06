@@ -10,11 +10,17 @@ import org.apache.log4j.Logger;
 public class GZunzipper {
 	final static Logger logger = Logger.getLogger(GZunzipper.class);
 	
-	public static boolean gunzipGZ(String gzPath,String tmpPath){
-		 boolean result = false;
-	     byte[] buffer = new byte[1024];
-	     GZIPInputStream gzis = null;
-	     FileOutputStream out=null;
+	
+	 private boolean result;
+	 private byte[]buffer ;
+	 private GZIPInputStream gzis;
+	 private FileOutputStream out;
+	
+	public boolean gunzipGZ(String gzPath,String tmpPath){
+		 result = false;
+	     buffer = new byte[1024];
+	     gzis = null;
+	     out=null;
 	     
 	     try{
 	 

@@ -1,4 +1,4 @@
-package gestor;
+package procedureExecutor;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -11,14 +11,14 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger; 
 import org.apache.log4j.PropertyConfigurator;
 
+import dbUtils.DBconnector;
+import dbUtils.ProcedureCaller;
 import utils.CNTManager;
 import utils.CSVreader;
 import utils.GZunzipper;
-import manifest.JManifest;
-import manifest.JSManifestItems;
-import manifest.ManifestParser;
-import DB.DBconnector;
-import DB.ProcedureCaller;
+import manifestUtils.JManifest;
+import manifestUtils.JSManifestItems;
+import manifestUtils.ManifestParser;
 
 
 public class Main {
@@ -26,7 +26,9 @@ public class Main {
 
 	private static ProcedureCaller caller;
 	private static DBconnector connector;
-//	private static int cnt;
+	private static GZunzipper unzziper;
+	private static CSVreader reader;
+	private static ManifestParser parser;
 	private static boolean error=false;
 
 	
@@ -38,6 +40,9 @@ public class Main {
 
 			caller = new ProcedureCaller();
 			connector = new DBconnector();
+			unzziper = new GZunzipper();
+			reader = new CSVreader();
+			parser = new ManifestParser();
 		
 			CNTManager.getInstance().readCnt();
 			
@@ -61,14 +66,13 @@ public class Main {
 
    
 	private static void getManifests (){
-
 		String manifestStr=existFile();
 		while (manifestStr!=null && !error){
 			String path = Configuration.getInstance().getGzPath()+File.separator+manifestStr;			
 
 			logger.info("Leyendo archivo: " + manifestStr);
 
-			JManifest manifest = ManifestParser.getJSONManifest(path);
+			JManifest manifest = parser.getJSONManifest(path);
 
 			logger.trace(manifestStr+": "+manifest.toString());
 
@@ -86,7 +90,7 @@ public class Main {
 	private static String existFile (){
 		String [] manifestFiles = Configuration.getInstance().getGzPathFile().list(jsonFilter);
 		for(int i = 0 ; i<manifestFiles.length;i++)
-		{ //"logid"+cnt+"_
+		{
 			String regex="logid"+String.valueOf( CNTManager.getInstance().getCnt())+"_";
 			if(manifestFiles[i].toLowerCase().contains(regex)){
 				return manifestFiles[i];
@@ -122,8 +126,8 @@ public class Main {
 				String gzPath = Configuration.getInstance().getGzPath()+File.separator + gzName;
 				String outPath = Configuration.getInstance().getTmpPath()+File.separator+gzName.replace(".gz", "");
 				
-				if(GZunzipper.gunzipGZ(gzPath, outPath )){
-					ArrayList<String[]> array = CSVreader.getParsedContent(outPath);
+				if(unzziper.gunzipGZ(gzPath, outPath )){
+					ArrayList<String[]> array = reader.getParsedContent(outPath);
 					logger.trace("Registros encontrados: " + array.size());
 					
 					if(array.size()>=1){
@@ -188,7 +192,6 @@ public class Main {
 	private static FilenameFilter jsonFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
 			String lowercaseName = name.toLowerCase();
-			//if (lowercaseName.endsWith("logid"+cnt+"_manifest.json")) {
 			if (lowercaseName.endsWith("manifest.json")) {
 				return true;
 			} else {

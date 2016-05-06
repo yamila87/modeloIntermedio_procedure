@@ -47,3 +47,5 @@ config.json
 .metadata/version.ini
 RemoteSystemsTempFiles/.project
 bin/.gitignore
+executeProcedure.jar
+logs/application.log.2016-04-29

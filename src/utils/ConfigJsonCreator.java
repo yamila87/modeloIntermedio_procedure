@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import gestor.Configuration;
+import procedureExecutor.Configuration;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,7 +14,7 @@ public class ConfigJsonCreator {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();		
-		Configuration config = new Configuration();		
+		Configuration config = new Configuration();
 		String json = gson.toJson(config);
 		
 		BufferedWriter bw = null;
