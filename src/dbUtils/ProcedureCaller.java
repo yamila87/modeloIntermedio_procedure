@@ -46,7 +46,7 @@ public class ProcedureCaller {
 	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg) throws SQLException  {
 		callableStatement = conn.prepareCall(call);
 
-		for(int i=0;i<arrayColsByReg.size();i++){
+		for(int i=1;i<arrayColsByReg.size();i++){
 
 			String[] reg = arrayColsByReg.get(i);	
 			logger.trace("Agrega registro n:." +i);

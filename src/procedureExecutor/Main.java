@@ -169,11 +169,11 @@ public class Main {
 			
 		}catch(Exception e){
 			result = false;
-			logger.error("Error en: " + procName+" ,Archivo: "+gzName);
+			logger.error("Error en: " + procName+" ,Archivo: "+gzName,e);
 		}
 		finally{
 			caller.closeCallableStatement();
-			
+			logger.trace("cerrando conexion...");
 			if(conn!=null){
 				try {
 					conn.setAutoCommit(true);

@@ -57,8 +57,8 @@ public class CSVreader {//csvutils
 	private ArrayList<String[]> getArray (ArrayList<String> arrayLines){		 
 		valuesList = new  ArrayList<String[]>();	
 		
-		for (int i = 1 ; i<arrayLines.size();i++){
-			String[] colValus = arrayLines.get(i).split(splitBy);			
+		for (int i = 0 ; i<arrayLines.size();i++){
+			String[] colValus = arrayLines.get(i).split(splitBy,-1);			
 			for(int j=0; j<colValus.length;j++){ //TODO arreglarlo desde el query
 
 				if(Pattern.matches(reg,  colValus[j])){
