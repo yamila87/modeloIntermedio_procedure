@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -106,19 +107,31 @@ public class Main {
 		
 		Connection conn =null;
 		
+		LinkedList<String> list = new LinkedList<String>();
+		
+		
+		for (Entry <String, JSManifestItems> entry : map.entrySet()){
+			list.add(entry.getKey());
+		}
+		
+		int size = list.size();
+		
 		String procName="";
 		String gzName="";
-		
+		String key="";
 		try{
 			logger.debug("Obteniendo conexion...");
 			
 			conn= connector.getConnection();
 			conn.setAutoCommit(false);
 			
-			for(Entry <String, JSManifestItems> entry : map.entrySet()){
+			for(int i=size-1 ; i>=0 ; i--){
+		//	for(Entry <String, JSManifestItems> entry : map.entrySet()){
+				key = list.get(i);
+			
 				
-				procName = Configuration.getInstance().getPackageName()+entry.getKey().split("\\.")[0].toLowerCase();
-				gzName = entry.getValue().getFname();
+				procName = Configuration.getInstance().getPackageName()+key.split("\\.")[0].toLowerCase();
+				gzName = map.get(key).getFname();
 				
 				logger.trace("Procesando: " + gzName);
 				logger.debug("ProcedureName:"+procName);

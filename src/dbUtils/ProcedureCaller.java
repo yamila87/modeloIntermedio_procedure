@@ -45,7 +45,8 @@ public class ProcedureCaller {
 	
 	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg) throws SQLException  {
 		callableStatement = conn.prepareCall(call);
-
+		callableStatement.setQueryTimeout(10);
+		
 		for(int i=1;i<arrayColsByReg.size();i++){
 
 			String[] reg = arrayColsByReg.get(i);	
@@ -62,6 +63,7 @@ public class ProcedureCaller {
 
 		logger.debug("Ejecutando proceso " + procedureName);
 		callableStatement.executeBatch();
+		logger.debug("ejecucion finalizada " + procedureName);
 	}
 	
 

@@ -1,7 +1,7 @@
 package manifestUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
+
 
 import com.google.gson.Gson;
 
@@ -12,14 +12,14 @@ public class JManifest {
 	private int logIdMin;
 	 
 	   
-		private Map<String , JSManifestItems> files;
+		private LinkedHashMap<String , JSManifestItems> files;
 		
-		public Map<String , JSManifestItems> getFiles() {
+		public LinkedHashMap<String , JSManifestItems> getFiles() {
 			return files;
 		}
 		public void addFiles(String key , JSManifestItems obj) {
 			if(files==null){
-				files = new HashMap<String , JSManifestItems>();
+				files = new LinkedHashMap<String , JSManifestItems>();
 			}
 			
 			this.files.put(key.trim(), obj);
