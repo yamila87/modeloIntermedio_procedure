@@ -21,17 +21,58 @@ public class CSVreader {//csvutils
 	private final String toReplace ="\\.[0-9]+";
 	
 
-	private  ArrayList<String> getFileContent ( String fileStr){
+	
+	public void openFile(String fileStr) throws FileNotFoundException{
+		br = new BufferedReader(new FileReader(fileStr));
+	}
+	
+	public ArrayList<String[]> read100Lines () throws IOException{
+		int i = 0;
+		int max = 100;
+		valuesList = new  ArrayList<String[]>();	
+		while ((currentLine = br.readLine()) != null && i<max) {
+			String[] colValus = currentLine.split(splitBy,-1);
+			valuesList.add(colValus);
+			i++;
+		}
+				
+		logger.trace(currentLine);
+		return valuesList;
+	}
+	
+	
+	public void closeFile (){
+		if(br!=null){
+			try {
+				br.close();
+			} catch (IOException e) {
+				logger.error("Error al leer csv ",e);
+			}
+		}
+	}
+	
+	private  ArrayList<String[]> getFileContent ( String fileStr){
 		logger.debug("Archivo a leer: " + fileStr);
 		
 		br = null;
 		currentLine = null;
 		contentLines = new ArrayList<String>();
+		valuesList = new  ArrayList<String[]>();	
 		try {
 			br = new BufferedReader(new FileReader(fileStr));
 			
 			while ((currentLine = br.readLine()) != null) {
-				contentLines.add(currentLine);
+				//contentLines.add(currentLine);
+				
+				String[] colValus = currentLine.split(splitBy,-1);			
+/*				for(int j=0; j<colValus.length;j++){ //TODO arreglarlo desde el query
+
+					if(Pattern.matches(reg,  colValus[j])){
+						String aux =  colValus[j].replaceAll(toReplace,"");				
+						colValus[j] = aux;
+					}
+				}*/
+				valuesList.add(colValus);			
 				logger.trace(currentLine);
 			}
 			
@@ -50,11 +91,11 @@ public class CSVreader {//csvutils
 			}
 		}
 			
-		return contentLines;
+		return valuesList;
 	}
 	
 	
-	private ArrayList<String[]> getArray (ArrayList<String> arrayLines){		 
+/*	private ArrayList<String[]> getArray (ArrayList<String> arrayLines){		 
 		valuesList = new  ArrayList<String[]>();	
 		
 		for (int i = 0 ; i<arrayLines.size();i++){
@@ -69,9 +110,9 @@ public class CSVreader {//csvutils
 			valuesList.add(colValus);		
 		}		
 		return valuesList;
-	}
+	}*/
 	
 	public ArrayList<String[]> getParsedContent ( String fileStr){
-		return getArray(getFileContent (fileStr));
+		return getFileContent (fileStr);
 	}
 }

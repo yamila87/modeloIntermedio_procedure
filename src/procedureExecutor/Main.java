@@ -119,6 +119,7 @@ public class Main {
 		String procName="";
 		String gzName="";
 		String key="";
+		boolean cols =false;
 		try{
 			logger.debug("Obteniendo conexion...");
 			
@@ -139,26 +140,42 @@ public class Main {
 				String gzPath = Configuration.getInstance().getGzPath()+File.separator + gzName;
 				String outPath = Configuration.getInstance().getTmpPath()+File.separator+gzName.replace(".gz", "");
 				
-				if(unzziper.gunzipGZ(gzPath, outPath )){
-					ArrayList<String[]> array = reader.getParsedContent(outPath);
-					logger.trace("Registros encontrados: " + array.size());
-					
-					if(array.size()>=1){
+				int qtyParams = 0;
 				
-						int qtyParams = array.get(0).length;
-						logger.trace("Columnas encontradas: " + qtyParams);
+				if(unzziper.gunzipGZ(gzPath, outPath )){
+					try {
+						reader.openFile(outPath);
 						
-						caller.setProcedureName(procName);
-						caller.setProcedureStringCaller(qtyParams);
+						ArrayList<String[]> array = reader.read100Lines();
+						while(array.size()>0){
+							logger.trace("Registros encontrados: " + array.size());
+							
+							if(array.size()>=1){
 						
-						logger.trace("Ejecutando procedure");
-						caller.executeProcedure(conn, array);	
-						
-					}else{
-						logger.warn("Archivo vacio: " + gzName);
-					}
+								if(!cols){
+									qtyParams = array.get(0).length;
+								    logger.trace("Columnas encontradas: " + qtyParams);
+								    cols=true;
+								}
+								caller.setProcedureName(procName);
+								caller.setProcedureStringCaller(qtyParams);
+								
+								logger.trace("Ejecutando procedure");
+								caller.executeProcedure(conn, array);	
+								
+							}else{
+								logger.warn("Archivo vacio: " + gzName);
+							}
 
-					result=true;			
+							array = reader.read100Lines();
+						}
+										
+						result=true;
+					} catch (Exception e) {
+						logger.error("Error al procesar archivo csv",e);
+					}finally{
+						reader.closeFile();
+					}			
 				}else{
 					logger.error("Error al descomprimir archivo: " + gzName);
 				}	

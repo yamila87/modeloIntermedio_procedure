@@ -127,7 +127,7 @@ public class  Configuration {
 		tmpPathFile.mkdirs();
 		cntPathFile.mkdirs();
 		
-		packageName = "custom_cv"+".";
+		packageName = packageName+".";
 		URL = "jdbc:"+motor+":thin:@"+host+":"+ port +":"+service;  
 		
 		logger.debug("Directorios creados");
