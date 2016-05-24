@@ -1,7 +1,12 @@
 package procedureExecutor;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,11 +17,16 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger; 
 import org.apache.log4j.PropertyConfigurator;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import dbUtils.DBconnector;
 import dbUtils.ProcedureCaller;
 import utils.CNTManager;
 import utils.CSVreader;
 import utils.GZunzipper;
+import utils.GroupCFGObj;
 import manifestUtils.JManifest;
 import manifestUtils.JSManifestItems;
 import manifestUtils.ManifestParser;
@@ -31,7 +41,7 @@ public class Main {
 	private static CSVreader reader;
 	private static ManifestParser parser;
 	private static boolean error=false;
-
+	private static Map<String,GroupCFGObj> gcfg;
 	
 	public static void main(String[] args) {
 		 PropertyConfigurator.configure("logconfig.properties");
@@ -39,6 +49,8 @@ public class Main {
 		 
 		if(Configuration.getInstance()!=null){
 
+			gcfg=loadGroupJson();
+			
 			caller = new ProcedureCaller();
 			connector = new DBconnector();
 			unzziper = new GZunzipper();
@@ -105,11 +117,9 @@ public class Main {
 		boolean result= false;	
 		Map<String, JSManifestItems> map = manifest.getFiles();
 		
-		Connection conn =null;
-		
+		Connection conn =null;		
 		LinkedList<String> list = new LinkedList<String>();
-		
-		
+				
 		for (Entry <String, JSManifestItems> entry : map.entrySet()){
 			list.add(entry.getKey());
 		}
@@ -119,6 +129,7 @@ public class Main {
 		String procName="";
 		String gzName="";
 		String key="";
+		String name="";
 		boolean cols =false;
 		try{
 			logger.debug("Obteniendo conexion...");
@@ -130,8 +141,8 @@ public class Main {
 		//	for(Entry <String, JSManifestItems> entry : map.entrySet()){
 				key = list.get(i);
 			
-				
-				procName = Configuration.getInstance().getPackageName()+key.split("\\.")[0].toLowerCase();
+				name=key.split("\\.")[0].toLowerCase();
+				procName = Configuration.getInstance().getPackageName()+name;
 				gzName = map.get(key).getFname();
 				
 				logger.trace("Procesando: " + gzName);
@@ -161,7 +172,7 @@ public class Main {
 								caller.setProcedureStringCaller(qtyParams);
 								
 								logger.trace("Ejecutando procedure");
-								caller.executeProcedure(conn, array);	
+								caller.executeProcedure(conn, array, getGroupBy(name,array.get(0)));	
 								
 							}else{
 								logger.warn("Archivo vacio: " + gzName);
@@ -173,6 +184,7 @@ public class Main {
 						result=true;
 					} catch (Exception e) {
 						logger.error("Error al procesar archivo csv",e);
+						break;
 					}finally{
 						reader.closeFile();
 					}			
@@ -230,5 +242,55 @@ public class Main {
 		}
 	};
 	
+	public static Map<String,GroupCFGObj> loadGroupJson (){
+		StringBuilder str = new StringBuilder();
+		BufferedReader br=null;
+		Map <String,GroupCFGObj> gcfg=null;
+		try {
+			br = new BufferedReader(new FileReader(Configuration.getInstance().getGroupFile()));
+			String currentLine = "";
+			while ((currentLine = br.readLine()) != null) {
+				str.append(currentLine);
+			}
+
+			String json = str.toString().substring(str.toString().indexOf("=")+1, str.toString().length());
+			
+		    Gson gson = new GsonBuilder().create();
+            Type typeOfHashMap = new TypeToken<Map<String, GroupCFGObj>>() { }.getType();
+             gcfg = gson.fromJson(json, typeOfHashMap); 
+    
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			if(br!=null){
+				try {
+					br.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return gcfg;
+
+	}
 	
+	private static int getGroupBy (String key,String[] cols){
+		int result = -1;
+		
+		if(gcfg.containsKey(key)){
+			String col = gcfg.get(key).getCampoResultado();
+			for(int i = cols.length-1 ; i>=0;i--){
+				if(cols[i].equals(col)){
+					result=i;
+					break;
+				}
+			}		
+		}
+		return result;
+	}
 }

@@ -5,17 +5,20 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import oracle.sql.ARRAY;
+import oracle.sql.ArrayDescriptor;
+
 import org.apache.log4j.Logger;
 
 public class ProcedureCaller {
 	final static Logger logger = Logger.getLogger(ProcedureCaller.class);
 	
-	
 	private CallableStatement callableStatement = null;
 	private String procedureName ="";
 	private StringBuilder procedureStringCall ;
 	private String call;
-	
+	private ArrayDescriptor arrDesc;
+	private ARRAY array_to_pass ;
 	
 	public void setProcedureName (String name){
 		procedureName = name;
@@ -40,13 +43,17 @@ public class ProcedureCaller {
 		procedureStringCall.append(")}");
 		logger.debug("Declaracion: " + procedureStringCall.toString());
 		call = procedureStringCall.toString();
+
 	}
 	
 	
-	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg) throws SQLException  {
+	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg, int colGroupBy) throws SQLException  {
 		callableStatement = conn.prepareCall(call);
 		callableStatement.setQueryTimeout(10);
 		
+		arrDesc = ArrayDescriptor.createDescriptor("STRINGARRAY", conn);
+		String [] strArr = null;
+
 		for(int i=1;i<arrayColsByReg.size();i++){
 
 			String[] reg = arrayColsByReg.get(i);	
@@ -54,7 +61,14 @@ public class ProcedureCaller {
 
 			for(int j=0 ; j<reg.length;j++){
 				logger.trace("PARAM:" + j +" Val: " + reg[j]);
-				callableStatement.setString(j+1,reg[j]);
+				if(j==colGroupBy){
+					strArr = reg[j].split(",",-1);
+					array_to_pass = new ARRAY(arrDesc,conn,strArr);
+					callableStatement.setArray(j+1, array_to_pass);
+					
+				}else{					
+					callableStatement.setString(j+1,reg[j]);
+				}
 			}
 
 			logger.trace("Agregando Batch...");

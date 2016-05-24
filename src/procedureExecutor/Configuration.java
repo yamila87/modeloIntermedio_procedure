@@ -32,7 +32,10 @@ public class  Configuration {
 	private transient File tmpPathFile;
 	private transient File gzPathFile;
 	private transient File cntPathFile;
-
+	private transient File groupFile;
+	
+	private String groupFilePath; 
+	
 	public static Configuration getInstance (){
 		if(instance==null){
 			String fileStr = "config.json";
@@ -118,11 +121,15 @@ public class  Configuration {
 		return cntPathFile;
 	}
 
+	public File getGroupFile(){
+		return groupFile;
+	}
 
 	private void setValues (){
 		gzPathFile = new File (gzPath);
 		tmpPathFile = new File (tmpPath);
 		cntPathFile = new File(cntPath);
+		groupFile = new File (groupFilePath);
 				
 		tmpPathFile.mkdirs();
 		cntPathFile.mkdirs();
