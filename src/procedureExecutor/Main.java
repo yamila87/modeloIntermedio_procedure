@@ -246,35 +246,35 @@ public class Main {
 		StringBuilder str = new StringBuilder();
 		BufferedReader br=null;
 		Map <String,GroupCFGObj> gcfg=null;
-		try {
-			br = new BufferedReader(new FileReader(Configuration.getInstance().getGroupFile()));
-			String currentLine = "";
-			while ((currentLine = br.readLine()) != null) {
-				str.append(currentLine);
-			}
-
-			String json = str.toString().substring(str.toString().indexOf("=")+1, str.toString().length());
-			
-		    Gson gson = new GsonBuilder().create();
-            Type typeOfHashMap = new TypeToken<Map<String, GroupCFGObj>>() { }.getType();
-             gcfg = gson.fromJson(json, typeOfHashMap); 
-    
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally{
-			if(br!=null){
-				try {
-					br.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		if(Configuration.getInstance().getGroupFile().exists()){
+			try {
+				br = new BufferedReader(new FileReader(Configuration.getInstance().getGroupFile()));
+				String currentLine = "";
+				while ((currentLine = br.readLine()) != null) {
+					str.append(currentLine);
+				}
+	
+				String json = str.toString().substring(str.toString().indexOf("=")+1, str.toString().length());
+				
+			    Gson gson = new GsonBuilder().create();
+	            Type typeOfHashMap = new TypeToken<Map<String, GroupCFGObj>>() { }.getType();
+	             gcfg = gson.fromJson(json, typeOfHashMap); 
+	    
+			} catch (FileNotFoundException e) {
+				logger.error("Error al leer archivo " + Configuration.getInstance().getGroupFile() ,e);
+			} catch (IOException e) {
+				logger.error("Error al leer archivo " + Configuration.getInstance().getGroupFile() ,e);
+			}finally{
+				if(br!=null){
+					try {
+						br.close();
+					} catch (IOException e) {
+						logger.error("Error al leer archivo " + Configuration.getInstance().getGroupFile() ,e);
+					}
 				}
 			}
 		}
+		
 		return gcfg;
 
 	}
