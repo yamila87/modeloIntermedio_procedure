@@ -28,7 +28,9 @@ public class  Configuration {
 	private String tmpPath="";
 	private String cntPath="";
 	private int syncDeltaMax;
+	private int maxLines;
 	
+
 	private transient File tmpPathFile;
 	private transient File gzPathFile;
 	private transient File cntPathFile;
@@ -125,6 +127,17 @@ public class  Configuration {
 		return groupFile;
 	}
 
+	public int getMaxLines() {
+		return maxLines;
+	}
+
+
+	public void setMaxLines(int maxLines) {
+		this.maxLines = maxLines;
+	}
+
+	
+	
 	private void setValues (){
 		gzPathFile = new File (gzPath);
 		tmpPathFile = new File (tmpPath);

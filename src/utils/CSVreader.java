@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import procedureExecutor.Configuration;
+
 public class CSVreader {//csvutils
 	final static Logger logger = Logger.getLogger(CSVreader.class);
 	private  BufferedReader br;
@@ -28,9 +30,12 @@ public class CSVreader {//csvutils
 	
 	public ArrayList<String[]> read100Lines () throws IOException{
 		int i = 0;
-		int max = 100;
+		int max = Configuration.getInstance().getMaxLines();  //TODO-poner en config
 		valuesList = new  ArrayList<String[]>();	
 		while ((currentLine = br.readLine()) != null && i<max) {
+			if(i==0){
+				logger.debug("primer linea de cada 100 " + currentLine);
+			}
 			String[] colValus = currentLine.split(splitBy,-1);
 			valuesList.add(colValus);
 			i++;

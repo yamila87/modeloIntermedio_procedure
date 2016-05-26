@@ -157,47 +157,60 @@ public class Main {
 					try {
 						reader.openFile(outPath);
 						
+						int groupById = -1;
+						
 						ArrayList<String[]> array = reader.read100Lines();
 						while(array.size()>0){
 							logger.trace("Registros encontrados: " + array.size());
-							
+							logger.trace("reg:"+ array.get(0));
 							if(array.size()>=1){
 						
 								if(!cols){
 									qtyParams = array.get(0).length;
 								    logger.trace("Columnas encontradas: " + qtyParams);
+								    groupById= getGroupBy(name,array.get(0));
 								    cols=true;
 								}
 								caller.setProcedureName(procName);
 								caller.setProcedureStringCaller(qtyParams);
 								
 								logger.trace("Ejecutando procedure");
-								caller.executeProcedure(conn, array, getGroupBy(name,array.get(0)));	
+								caller.executeProcedure(conn, array,groupById);	
 								
 							}else{
 								logger.warn("Archivo vacio: " + gzName);
 							}
 
+							logger.debug("SIGUIENTES 100");
 							array = reader.read100Lines();
 						}
-										
+						logger.trace("Termino de insertar todos los registos");
+						
 						result=true;
 					} catch (Exception e) {
 						logger.error("Error al procesar archivo csv",e);
 						break;
 					}finally{
-						reader.closeFile();
-					}			
+						reader.closeFile();						
+						logger.trace("RESULTADO:"+result);
+						if(result){
+							conn.commit();
+							logger.trace("Commit, manifest");
+						}else{
+							logger.warn("Realizando rollback...");
+							conn.rollback();
+						}					
+						
+					}
+
 				}else{
 					logger.error("Error al descomprimir archivo: " + gzName);
 				}	
 				
 				new File(outPath).delete();
-			}
-			
-			conn.commit();
-			logger.trace("Commit, manifest");
 				
+					
+			}			
 		}catch(SQLException e){
 			logger.error("Error al procesar manifest", e);
 			logger.warn("Realizando rollback...");
