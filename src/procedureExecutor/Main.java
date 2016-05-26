@@ -126,6 +126,8 @@ public class Main {
 		
 		int size = list.size();
 		
+		logger.info("Cantidad de archivos gz " + size);
+		
 		String procName="";
 		String gzName="";
 		String key="";
@@ -154,6 +156,9 @@ public class Main {
 				int qtyParams = 0;
 				
 				if(unzziper.gunzipGZ(gzPath, outPath )){
+					
+					logger.info("Procesando archivo " + gzName);
+					
 					try {
 						reader.openFile(outPath);							
 						int groupById = -1;
@@ -185,7 +190,6 @@ public class Main {
 							logger.debug("SIGUIENTES 100");
 							array = reader.read100Lines();
 						}
-						logger.trace("Termino de insertar todos los registos");
 						
 						result=true;
 					} catch (Exception e) {

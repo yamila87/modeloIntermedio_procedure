@@ -30,8 +30,11 @@ public class CSVreader {//csvutils
 	
 	public ArrayList<String[]> read100Lines () throws IOException{
 		int i = 0;
-		int max = Configuration.getInstance().getMaxLines();  //TODO-poner en config
-		valuesList = new  ArrayList<String[]>();	
+		int max = Configuration.getInstance().getMaxLines();  
+		valuesList = new  ArrayList<String[]>();
+		
+		logger.info("Leyendo siguientes : " + max + " lineas");
+		
 		while ((currentLine = br.readLine()) != null && i<max) {
 			if(i==0){
 				logger.debug("primer linea de cada 100 " + currentLine);
