@@ -28,7 +28,7 @@ public class ProcedureCaller {
 		return procedureName;
 	}
 	
-	public void setProcedureStringCaller (int paramsQty){
+	public void setProcedureStringCaller (Connection conn,int paramsQty) throws SQLException{
 
 		//"{call custom_cv.geohub(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		procedureStringCall = new StringBuilder();		
@@ -43,12 +43,13 @@ public class ProcedureCaller {
 		procedureStringCall.append(")}");
 		logger.debug("Declaracion: " + procedureStringCall.toString());
 		call = procedureStringCall.toString();
+		callableStatement = conn.prepareCall(call);
 
 	}
 	
 	
 	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg, int colGroupBy) throws SQLException  {
-		callableStatement = conn.prepareCall(call);
+	
 		//callableStatement.setQueryTimeout(60); //segundos
 		
 		arrDesc = ArrayDescriptor.createDescriptor("STRINGARRAY", conn);

@@ -155,8 +155,7 @@ public class Main {
 				
 				if(unzziper.gunzipGZ(gzPath, outPath )){
 					try {
-						reader.openFile(outPath);
-						
+						reader.openFile(outPath);							
 						int groupById = -1;
 						
 						ArrayList<String[]> array = reader.read100Lines();
@@ -169,11 +168,13 @@ public class Main {
 									qtyParams = array.get(0).length;
 								    logger.trace("Columnas encontradas: " + qtyParams);
 								    groupById= getGroupBy(name,array.get(0));
+								    
+									caller.setProcedureName(procName);
+									caller.setProcedureStringCaller(conn,qtyParams);
+
 								    cols=true;
 								}
-								caller.setProcedureName(procName);
-								caller.setProcedureStringCaller(qtyParams);
-								
+							
 								logger.trace("Ejecutando procedure");
 								caller.executeProcedure(conn, array,groupById);	
 								
