@@ -39,6 +39,7 @@ public class CSVreader {//csvutils
 			if(i==0){
 				logger.debug("primer linea de cada 100 " + currentLine);
 			}
+				
 			String[] colValus = currentLine.split(splitBy,-1);
 			valuesList.add(colValus);
 			i++;
