@@ -187,7 +187,7 @@ public class Main {
 								}
 							
 								logger.trace("Ejecutando procedure");
-								//caller.executeProcedure(conn, array,groupById);	
+								caller.executeProcedure(conn, array,groupById);	
 								
 							}else{
 								logger.warn("Archivo vacio: " + gzName);
