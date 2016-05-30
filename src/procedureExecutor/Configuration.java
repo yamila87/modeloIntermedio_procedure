@@ -3,6 +3,8 @@ package procedureExecutor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
@@ -22,6 +24,11 @@ public class  Configuration {
 	private String user="";
 	private String password="";
 	private String packageName="";
+	private String customPackageName="";
+	private String [] customProcedureName;
+	
+	private transient ArrayList <String> customProcedures;
+
 	private transient String URL;
 	
 	private String gzPath="";
@@ -131,14 +138,31 @@ public class  Configuration {
 		return maxLines;
 	}
 
+	
+	public String getCustomPackageName() {
+		return customPackageName;
+	}
+
+	public ArrayList<String> getCustomProcedures() {
+		return customProcedures;
+	}
+
+	public void setCustomPackageName(String customPackageName) {
+		this.customPackageName = customPackageName;
+	}
+
+	public void setCustomProcedureName(String[] customProcedureName) {
+		this.customProcedureName = customProcedureName;
+	}
 
 	public void setMaxLines(int maxLines) {
 		this.maxLines = maxLines;
 	}
 
 	
-	
 	private void setValues (){
+		customProcedures = new ArrayList<String>(Arrays.asList(customProcedureName));
+		
 		gzPathFile = new File (gzPath);
 		tmpPathFile = new File (tmpPath);
 		cntPathFile = new File(cntPath);
@@ -148,6 +172,7 @@ public class  Configuration {
 		cntPathFile.mkdirs();
 		
 		packageName = packageName+".";
+		customPackageName = customPackageName + ".";
 		URL = "jdbc:"+motor+":thin:@"+host+":"+ port +":"+service;  
 		
 		logger.debug("Directorios creados");
