@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PS_RESULT=`ps -ea | grep run.procedures | wc -l`
+PS_RESULT=$(ps -ea | grep run.procedures | wc -l)
 
 if [ "$PS_RESULT" -eq 2 ]
 then
