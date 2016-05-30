@@ -143,8 +143,14 @@ public class Main {
 		//	for(Entry <String, JSManifestItems> entry : map.entrySet()){
 				key = list.get(i);
 			
-				name=key.split("\\.")[0].toLowerCase();
-				procName = Configuration.getInstance().getPackageName()+name;
+				name=key.split("\\.")[0];
+				
+				if(Configuration.getInstance().getCustomProcedures().contains(name)){
+					procName = Configuration.getInstance().getCustomPackageName()+name;
+				}else{					
+					procName = Configuration.getInstance().getPackageName()+name;
+				}
+
 				gzName = map.get(key).getFname();
 				
 				logger.trace("Procesando: " + gzName);
@@ -181,13 +187,12 @@ public class Main {
 								}
 							
 								logger.trace("Ejecutando procedure");
-								caller.executeProcedure(conn, array,groupById);	
+								//caller.executeProcedure(conn, array,groupById);	
 								
 							}else{
 								logger.warn("Archivo vacio: " + gzName);
 							}
-
-							logger.debug("SIGUIENTES 100");
+					
 							array = reader.read100Lines();
 						}
 						
@@ -204,17 +209,14 @@ public class Main {
 						}else{
 							logger.warn("Realizando rollback...");
 							conn.rollback();
-						}					
-						
+						}											
 					}
 
 				}else{
 					logger.error("Error al descomprimir archivo: " + gzName);
 				}	
 				
-				new File(outPath).delete();
-				
-					
+				new File(outPath).delete();								
 			}			
 		}catch(SQLException e){
 			logger.error("Error al procesar manifest", e);

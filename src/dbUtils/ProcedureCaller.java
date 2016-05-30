@@ -126,7 +126,7 @@ public class ProcedureCaller {
 	
 	public void executeProcedureBatch() throws SQLException{
 
-		logger.debug("Ejecutando proceso " + procedureName);
+		logger.info("Ejecutando proceso " + procedureName);
 		callableStatement.executeBatch();
 		logger.debug("ejecucion finalizada " + procedureName);
 	}
