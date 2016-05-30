@@ -1,0 +1,10 @@
+#!/bin/bash
+
+PS_RESULT=`ps -ea | grep run.procedures | wc -l`
+
+if [ "$PS_RESULT" -eq 2 ]
+then
+	java -jar executeProcedure.jar
+else
+	echo "El proceso sigue ejecutando"
+fi
