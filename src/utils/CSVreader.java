@@ -23,20 +23,25 @@ public class CSVreader {//csvutils
 	}
 	
 	public ArrayList<String[]> read100Lines () throws IOException{
-		int i = 0;
+		int i = 1;
 		int max = Configuration.getInstance().getMaxLines();  
 		valuesList = new  ArrayList<String[]>();
 		
 		logger.info("Leyendo siguientes : " + max + " lineas");
 		
 		while ((currentLine = br.readLine()) != null && (i<max || max==0)) {
-			if(i==0){
+			if(i==1){
 				logger.debug("primer linea de cada "+ max+" : " + currentLine);
 			}
 				
 			String[] colValus = currentLine.split(splitBy,-1);
 			valuesList.add(colValus);
 			i++;
+		}
+		
+		if( currentLine!= null ){
+			String[] colValus = currentLine.split(splitBy,-1);
+			valuesList.add(colValus);
 		}
 				
 		logger.trace(currentLine);

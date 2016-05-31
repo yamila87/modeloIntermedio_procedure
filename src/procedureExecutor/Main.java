@@ -182,6 +182,7 @@ public class Main {
 								    
 									caller.setProcedureName(procName);
 									caller.setProcedureStringCaller(conn,qtyParams);
+									array.remove(0);
 
 								    cols=true;
 								}
