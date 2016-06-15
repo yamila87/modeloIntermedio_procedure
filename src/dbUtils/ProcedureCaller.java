@@ -48,11 +48,11 @@ public class ProcedureCaller {
 	}
 	
 	
-	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg, int colGroupBy) throws SQLException  {
+	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg, int colGroupBy , String type) throws SQLException  {
 	
 		//callableStatement.setQueryTimeout(60); //segundos
 		
-		arrDesc = ArrayDescriptor.createDescriptor("FLOATARRAY", conn);
+		arrDesc = ArrayDescriptor.createDescriptor(type.toUpperCase(), conn);
 		String [] strArr = null;
 
 		for(int i=0;i<arrayColsByReg.size();i++){

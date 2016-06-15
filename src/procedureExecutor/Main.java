@@ -170,6 +170,7 @@ public class Main {
 					try {
 						reader.openFile(outPath);							
 						int groupById = -1;
+						String groupByType ="";
 						
 						ArrayList<String[]> array = reader.read100Lines();
 						while(array.size()>0){
@@ -181,7 +182,7 @@ public class Main {
 									qtyParams = array.get(0).length; 
 								    logger.trace("Columnas encontradas: " + qtyParams);
 								    groupById= getGroupBy(name,array.get(0));
-								    
+								    groupByType = gcfg.get(name).getCampoResultadoTipo();
 									caller.setProcedureName(procName);
 									caller.setProcedureStringCaller(conn,qtyParams);
 									array.remove(0);
@@ -190,7 +191,7 @@ public class Main {
 								}
 							
 								logger.trace("Ejecutando procedure");
-								caller.executeProcedure(conn, array,groupById);	
+								caller.executeProcedure(conn, array,groupById,groupByType);	
 								
 							}else{
 								logger.warn("Archivo vacio: " + gzName);

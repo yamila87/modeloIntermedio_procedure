@@ -5,6 +5,7 @@ public class GroupCFGObj {
 	private String campoPor;
 	private String[] camposAgrupar;
 	private String campoResultado;
+	private String campoResultadoTipo;
 	
 	public String getCampoPor() {
 		return campoPor;
@@ -23,6 +24,12 @@ public class GroupCFGObj {
 	}
 	public void setCampoResultado(String campoResultado) {
 		this.campoResultado = campoResultado;
+	}
+	public String getCampoResultadoTipo() {
+		return campoResultadoTipo;
+	}
+	public void setCampoResultadoTipo(String campoResultadoTipo) {
+		this.campoResultadoTipo = campoResultadoTipo;
 	}
 	
 }
