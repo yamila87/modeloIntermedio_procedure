@@ -39,7 +39,7 @@ public class CSVreader {//csvutils
 			i++;
 		}
 		
-		if( currentLine!= null ){
+		if( currentLine!= null && !currentLine.isEmpty()){
 			String[] colValus = currentLine.split(splitBy,-1);
 			valuesList.add(colValus);
 		}

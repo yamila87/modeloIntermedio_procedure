@@ -52,10 +52,10 @@ public class ProcedureCaller {
 	
 		//callableStatement.setQueryTimeout(60); //segundos
 		
-		arrDesc = ArrayDescriptor.createDescriptor("STRINGARRAY", conn);
+		arrDesc = ArrayDescriptor.createDescriptor("FLOATARRAY", conn);
 		String [] strArr = null;
 
-		for(int i=1;i<arrayColsByReg.size();i++){
+		for(int i=0;i<arrayColsByReg.size();i++){
 
 			String[] reg = arrayColsByReg.get(i);	
 			logger.trace("Agrega registro n:." +i);
@@ -68,11 +68,14 @@ public class ProcedureCaller {
 				if(j==colGroupBy){
 					
 					logger.trace("PARAM TO ARRAY:" + j +" Val: " + reg[j]);
-					
-					strArr = reg[j].split(",",-1);
-					array_to_pass = new ARRAY(arrDesc,conn,strArr);
-					callableStatement.setArray(j+1, array_to_pass);
-					
+					if(reg[j]!=null && !reg[j].isEmpty()){
+						strArr = reg[j].split(",",-1);
+						array_to_pass = new ARRAY(arrDesc,conn,strArr);
+						callableStatement.setArray(j+1, array_to_pass);
+					}else{
+						callableStatement.setNull(j+1, java.sql.Types.ARRAY, "FLOATARRAY");
+					}	
+
 				}else{										
 					logger.trace("PARAM:" + j +" Val: " + reg[j]);
 									
@@ -107,7 +110,7 @@ public class ProcedureCaller {
 			}
 
 			if(j==colGroupBy){
-
+					
 				logger.trace("PARAM TO ARRAY:" + j +" Val: " + reg[j]);
 
 				strArr = reg[j].split(",",-1);

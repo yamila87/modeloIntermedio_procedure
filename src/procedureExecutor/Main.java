@@ -29,7 +29,7 @@ import utils.GZunzipper;
 import utils.GroupCFGObj;
 import manifestUtils.JManifest;
 import manifestUtils.JSManifestItems;
-import manifestUtils.ManifestParser;
+import manifestUtils.ManifestParser; 
 
 
 public class Main {
@@ -118,32 +118,34 @@ public class Main {
 		Map<String, JSManifestItems> map = manifest.getFiles();
 		
 		Connection conn =null;		
-		LinkedList<String> list = new LinkedList<String>();
+	/*	LinkedList<String> list = new LinkedList<String>();
 				
 		for (Entry <String, JSManifestItems> entry : map.entrySet()){
 			list.add(entry.getKey());
 		}
 		
-		int size = list.size();
+		int size = list.size();*/
 		
-		logger.info("Cantidad de archivos gz " + size);
+		//logger.info("Cantidad de archivos gz " + size);
 		
 		String procName="";
 		String gzName="";
 		String key="";
 		String name="";
-		boolean cols =false;
+		
 		try{
 			logger.debug("Obteniendo conexion...");
 			
 			conn= connector.getConnection();
 			conn.setAutoCommit(false);
 			
-			for(int i=size-1 ; i>=0 ; i--){
-		//	for(Entry <String, JSManifestItems> entry : map.entrySet()){
-				key = list.get(i);
-			
+		//	for(int i=size-1 ; i>=0 ; i--){
+			for(Entry <String, JSManifestItems> entry : map.entrySet()){
+			//	key = list.get(i);
+				key = entry.getKey();
 				name=key.split("\\.")[0];
+				
+				boolean cols =false;
 				
 				if(Configuration.getInstance().getCustomProcedures().contains(name)){
 					procName = Configuration.getInstance().getCustomPackageName()+name;
@@ -176,7 +178,7 @@ public class Main {
 							if(array.size()>=1){
 						
 								if(!cols){
-									qtyParams = array.get(0).length;
+									qtyParams = array.get(0).length; 
 								    logger.trace("Columnas encontradas: " + qtyParams);
 								    groupById= getGroupBy(name,array.get(0));
 								    
