@@ -118,15 +118,6 @@ public class Main {
 		Map<String, JSManifestItems> map = manifest.getFiles();
 		
 		Connection conn =null;		
-	/*	LinkedList<String> list = new LinkedList<String>();
-				
-		for (Entry <String, JSManifestItems> entry : map.entrySet()){
-			list.add(entry.getKey());
-		}
-		
-		int size = list.size();*/
-		
-		//logger.info("Cantidad de archivos gz " + size);
 		
 		String procName="";
 		String gzName="";
@@ -138,10 +129,8 @@ public class Main {
 			
 			conn= connector.getConnection();
 			conn.setAutoCommit(false);
-			
-		//	for(int i=size-1 ; i>=0 ; i--){
+
 			for(Entry <String, JSManifestItems> entry : map.entrySet()){
-			//	key = list.get(i);
 				key = entry.getKey();
 				name=key.split("\\.")[0];
 				
@@ -197,6 +186,15 @@ public class Main {
 								logger.warn("Archivo vacio: " + gzName);
 							}
 					
+							logger.trace("RESULTADO:"+result);
+							if(result){
+								conn.commit();
+								logger.trace("Commit, manifest");
+							}else{
+								logger.warn("Realizando rollback...");
+								conn.rollback();
+							}	
+						
 							array = reader.read100Lines();
 						}
 						
@@ -205,15 +203,7 @@ public class Main {
 						logger.error("Error al procesar archivo csv",e);
 						break;
 					}finally{
-						reader.closeFile();						
-						logger.trace("RESULTADO:"+result);
-						if(result){
-							conn.commit();
-							logger.trace("Commit, manifest");
-						}else{
-							logger.warn("Realizando rollback...");
-							conn.rollback();
-						}											
+						reader.closeFile();																
 					}
 
 				}else{
@@ -225,13 +215,6 @@ public class Main {
 		}catch(SQLException e){
 			logger.error("Error al procesar manifest", e);
 			logger.warn("Realizando rollback...");
-			result = false;
-			try {
-				conn.rollback();
-			} catch (SQLException e1) {
-				logger.fatal("Error al realizar el rollback".toUpperCase(),e1);
-				//TODO y si llega aca ???
-			}
 			
 		}catch(Exception e){
 			result = false;

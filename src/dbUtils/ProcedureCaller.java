@@ -93,11 +93,11 @@ public class ProcedureCaller {
 	}
 	
 
-	public void addBatch (Connection conn , String[] arrayColsByReg, int colGroupBy) throws SQLException  {
+	public void addBatch (Connection conn , String[] arrayColsByReg, int colGroupBy,String type) throws SQLException  {
 
 		//callableStatement.setQueryTimeout(60); //segundos
 
-		arrDesc = ArrayDescriptor.createDescriptor("STRINGARRAY", conn);
+		arrDesc = ArrayDescriptor.createDescriptor(type.toUpperCase(), conn);
 		String [] strArr = null;
 
 
@@ -110,12 +110,14 @@ public class ProcedureCaller {
 			}
 
 			if(j==colGroupBy){
-					
 				logger.trace("PARAM TO ARRAY:" + j +" Val: " + reg[j]);
-
-				strArr = reg[j].split(",",-1);
-				array_to_pass = new ARRAY(arrDesc,conn,strArr);
-				callableStatement.setArray(j+1, array_to_pass);
+				if(reg[j]!=null && !reg[j].isEmpty()){
+					strArr = reg[j].split(",",-1);
+					array_to_pass = new ARRAY(arrDesc,conn,strArr);
+					callableStatement.setArray(j+1, array_to_pass);
+				}else{
+					callableStatement.setNull(j+1, java.sql.Types.ARRAY, "FLOATARRAY");
+				}	
 
 			}else{										
 				logger.trace("PARAM:" + j +" Val: " + reg[j]);
