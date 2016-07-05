@@ -142,6 +142,7 @@ public class Main {
 					outPath = Configuration.getInstance().getTmpPath()+File.separator+gzName.replace(".gz", "");
 
 					int qtyParams = 0;
+					qtyReg = 0;
 
 					if(unzziper.gunzipGZ(gzPath, outPath )){
 						loggerTime.info("csv para: " + procName);
@@ -175,15 +176,17 @@ public class Main {
 								
 								conn.commit();
 								qtyReg+=caller.getRegQty();
-								logger.trace("Commit");
-
+								
+								if((qtyReg % 9000)==0){
+									logger.info("insertados hasta el momento:" + qtyReg);
+								}
+								
 								array = reader.readLines();
 								
 							}else{
 								logger.warn("Archivo vacio: " + outPath);
 								break;
 							}
-
 						}		
 
 						afterCsv = java.lang.System.currentTimeMillis();
@@ -205,7 +208,10 @@ public class Main {
 					}else{
 						logger.error("Error al descomprimir archivo: " + gzName);
 					}						
-				}				
+				}
+				
+			//	conn.commit();
+				
 				afterManifest = java.lang.System.currentTimeMillis();
 				loggerTime.info("Tiempo para manifest:" + (afterManifest-beforeManifest));				
 			}
