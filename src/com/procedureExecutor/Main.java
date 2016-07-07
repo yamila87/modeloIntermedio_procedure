@@ -86,7 +86,7 @@ public class Main {
 			}
 
 		}else{
-			logger.info("No se encontraron manifest para el logid: " +  CNTManager.getInstance().getCnt());
+			logger.info("No se encontro manifest para el logid: " +  CNTManager.getInstance().getCnt());
 		}		
 	}
 	
@@ -106,13 +106,13 @@ public class Main {
 		String gzPath = "";
 		String outPath ="";
 
-		long beforeExe = 0;
+	/*	long beforeExe = 0;
 		long afterExe = 0;		
 		long beforeManifest = 0;
 		long afterManifest = 0;	
 		long beforeCsv = 0;
 		long afterCsv=0;
-		ArrayList<Long> promedioPorRegistros = new ArrayList<Long>();
+		ArrayList<Long> promedioPorRegistros = new ArrayList<Long>();*/
 
 		int qtyReg = 0;
 		try{
@@ -121,7 +121,7 @@ public class Main {
 			conn= connector.getConnection();
 			if(conn!=null){
 				conn.setAutoCommit(false);
-				beforeManifest =  java.lang.System.currentTimeMillis();
+			//	beforeManifest =  java.lang.System.currentTimeMillis();
 
 				for(Entry <String, JSManifestItems> entry : map.entrySet()){
 					key = entry.getKey();
@@ -145,8 +145,8 @@ public class Main {
 					qtyReg = 0;
 
 					if(unzziper.gunzipGZ(gzPath, outPath )){
-						loggerTime.info("csv para: " + procName);
-						beforeCsv =  java.lang.System.currentTimeMillis();
+					//	loggerTime.info("csv para: " + procName);
+					//	beforeCsv =  java.lang.System.currentTimeMillis();
 
 						reader.openFile(outPath);							
 						int groupById = -1;
@@ -169,17 +169,16 @@ public class Main {
 								}
 
 								logger.trace("Ejecutando procedure");									
-								beforeExe =  java.lang.System.currentTimeMillis();								
+							//	beforeExe =  java.lang.System.currentTimeMillis();								
 								caller.executeProcedure(conn, array,groupById,groupByType);									
-								afterExe =  java.lang.System.currentTimeMillis();									
-								promedioPorRegistros.add(afterExe-beforeExe);	
+							//	afterExe =  java.lang.System.currentTimeMillis();									
+							//	promedioPorRegistros.add(afterExe-beforeExe);	
 								
 								conn.commit();
 								qtyReg+=caller.getRegQty();
 								
-								if((qtyReg % 9000)==0){
-									logger.info("insertados hasta el momento:" + qtyReg);
-								}
+								logger.info("insertados hasta el momento:" + qtyReg);
+								
 								
 								array = reader.readLines();
 								
@@ -189,10 +188,10 @@ public class Main {
 							}
 						}		
 
-						afterCsv = java.lang.System.currentTimeMillis();
+					//	afterCsv = java.lang.System.currentTimeMillis();
 
 						logger.info("Cantidad de registros procesados :"+ qtyReg);
-						long resultAcum = 0 ;
+				/*		long resultAcum = 0 ;
 
 						for(Long l : promedioPorRegistros){
 							resultAcum+=l;
@@ -202,18 +201,19 @@ public class Main {
 							long resultPromedio = resultAcum / caller.getRegQty();	
 							loggerTime.info("Promedio por cada "+Configuration.getInstance().getMaxLines()+": " +resultPromedio );
 							loggerTime.info("Tiempo para csv "+name+":" + (afterCsv -beforeCsv));
-						}	
+						}	*/
 						reader.closeFile();																
 						new File(outPath).delete();							
 					}else{
 						logger.error("Error al descomprimir archivo: " + gzName);
+						result=false;
 					}						
 				}
 				
 			//	conn.commit();
 				
-				afterManifest = java.lang.System.currentTimeMillis();
-				loggerTime.info("Tiempo para manifest:" + (afterManifest-beforeManifest));				
+			//	afterManifest = java.lang.System.currentTimeMillis();
+			//	loggerTime.info("Tiempo para manifest:" + (afterManifest-beforeManifest));				
 			}
 		}catch(IOException e){
 			logger.error("Error al leer el archivo :" +outPath);

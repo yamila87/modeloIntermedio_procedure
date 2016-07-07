@@ -141,4 +141,39 @@ public class ProcedureCaller {
 		return regQty;
 	}
 	
+	
+	public void executeProcedureByReg(Connection conn ,ArrayList<String[]> arrayColsByReg, int colGroupBy , String type) throws SQLException{
+		arrDesc = ArrayDescriptor.createDescriptor(type.toUpperCase(), conn);
+		String [] strArr = null;
+		regQty=0;
+		
+		for(int i=0;i<arrayColsByReg.size();i++){
+			regQty++;
+			String[] reg = arrayColsByReg.get(i);	
+			for(int j=0 ; j<reg.length;j++){
+				if(reg[j].equals("null")){
+					reg[j]="";
+				}
+	
+				if(j==colGroupBy){					
+					logger.trace("PARAM TO ARRAY:" + j +" Val: " + reg[j]);
+					if(reg[j]!=null && !reg[j].isEmpty()){
+						strArr = reg[j].split(",",-1);
+						array_to_pass = new ARRAY(arrDesc,conn,strArr);
+						callableStatement.setArray(j+1, array_to_pass);
+					}else{
+						callableStatement.setNull(j+1, java.sql.Types.ARRAY, "FLOATARRAY");
+					}	
+				}else{										
+					logger.trace("PARAM:" + j +" Val: " + reg[j]);
+									
+					callableStatement.setString(j+1,reg[j]);
+				}
+			}
+			
+			callableStatement.execute();
+		}	
+
+	}
+	
 }
