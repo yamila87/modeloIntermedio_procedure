@@ -50,3 +50,5 @@ bin/.gitignore
 executeProcedure.jar
 logs/application.log.2016-04-29
 logs/
+executeProcedureTEST.jar
+executeProcedure1.jar

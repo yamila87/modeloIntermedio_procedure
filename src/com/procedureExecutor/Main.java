@@ -50,6 +50,9 @@ public class Main {
 			CNTManager.getInstance().readCnt();			
 			logger.info("logid: " + CNTManager.getInstance().getCnt());
 			groupUtil.loadGroupJson();
+			
+			logger.trace(groupUtil.getResultType("elemento_h"));
+			
 			loadManifeset();
 
 			System.exit(0); 
@@ -159,7 +162,7 @@ public class Main {
 									qtyParams = array.get(0).length; 
 									logger.debug("Columnas encontradas: " + qtyParams);
 									groupById= groupUtil.getGroupBy(name,array.get(0));
-									groupByType = "floatArray";	
+									groupByType = groupUtil.getResultType(name);	
 									logger.debug("Agrupa por: " + groupById +" tipo:" + groupByType);									
 									caller.setProcedureName(procName);
 									caller.setProcedureStringCaller(conn,qtyParams);

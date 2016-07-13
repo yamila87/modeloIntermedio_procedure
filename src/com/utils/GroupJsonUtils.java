@@ -34,6 +34,8 @@ public class GroupJsonUtils {
 	
 				String json = str.toString().substring(str.toString().indexOf("=")+1, str.toString().length());
 				
+				logger.trace("groupBy: " + json);
+				
 			    Gson gson = new GsonBuilder().create();
 	            Type typeOfHashMap = new TypeToken<Map<String, GroupCFGObj>>() { }.getType();
 	             gcfg = gson.fromJson(json, typeOfHashMap); 
@@ -73,7 +75,13 @@ public class GroupJsonUtils {
 	}
 	
 	public String getResultType (String key){
-		return gcfg.get(key).getCampoResultadoTipo();
+		if(gcfg.containsKey(key)){
+			return gcfg.get(key).getCampoResultadoTipo();
+		}else{
+			return null;
+		}
+		
+		
 	}
 	
 	

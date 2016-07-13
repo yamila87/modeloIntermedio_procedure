@@ -50,7 +50,10 @@ public class ProcedureCaller {
 	
 	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg, int colGroupBy , String type) throws SQLException  {	
 		//callableStatement.setQueryTimeout(60); //segundos		
-		arrDesc = ArrayDescriptor.createDescriptor(type.toUpperCase(), conn);
+		if(type!=null){		
+			arrDesc = ArrayDescriptor.createDescriptor(type.toUpperCase(), conn);
+		}
+		
 		String [] strArr = null;
 
 		regQty = 0 ;
