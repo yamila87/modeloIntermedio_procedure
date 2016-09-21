@@ -74,7 +74,7 @@ public class ProcedureCaller {
 						array_to_pass = new ARRAY(arrDesc,conn,strArr);
 						callableStatement.setArray(j+1, array_to_pass);
 					}else{
-						callableStatement.setNull(j+1, java.sql.Types.ARRAY, "FLOATARRAY");
+						callableStatement.setNull(j+1, java.sql.Types.ARRAY, type.toUpperCase());
 					}	
 				}else{										
 					logger.trace("PARAM:" + j +" Val: " + reg[j]);
@@ -111,7 +111,7 @@ public class ProcedureCaller {
 					array_to_pass = new ARRAY(arrDesc,conn,strArr);
 					callableStatement.setArray(j+1, array_to_pass);
 				}else{
-					callableStatement.setNull(j+1, java.sql.Types.ARRAY, "FLOATARRAY");
+					callableStatement.setNull(j+1, java.sql.Types.ARRAY, type.toUpperCase());
 				}	
 
 			}else{										
@@ -165,7 +165,7 @@ public class ProcedureCaller {
 						array_to_pass = new ARRAY(arrDesc,conn,strArr);
 						callableStatement.setArray(j+1, array_to_pass);
 					}else{
-						callableStatement.setNull(j+1, java.sql.Types.ARRAY, "FLOATARRAY");
+						callableStatement.setNull(j+1, java.sql.Types.ARRAY, type.toUpperCase());
 					}	
 				}else{										
 					logger.trace("PARAM:" + j +" Val: " + reg[j]);

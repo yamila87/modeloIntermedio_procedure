@@ -1,8 +1,10 @@
 package com.utils;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
@@ -37,7 +39,10 @@ public class GZunzipper {
 	    	result=true;
 	    }catch(IOException ex){
 	       logger.error("Error al descomprimir: "+ gzPath ,ex);
-	    }finally{
+	    }catch(Exception ex){
+	    	logger.error("Error al descomprimir: "+ gzPath ,ex);
+	    }
+	     finally{
 	    	
 	    	if(gzis!=null){
 	    		 try {
@@ -59,4 +64,37 @@ public class GZunzipper {
 	     return result;
 	} 
 	
+	
+	public BufferedReader  getGZIPStream (String gzPath){
+
+		 FileInputStream fin = null;
+   	  	GZIPInputStream gzis = null;
+   	  	InputStreamReader xover = null;
+   	  	BufferedReader br = null;
+		
+		
+	     try{
+	 
+	    	logger.debug("A Leer: "+ gzPath); 	
+	    	
+	    	 fin = new FileInputStream(gzPath);
+	    	 gzis = new GZIPInputStream(fin);
+	    	 xover = new InputStreamReader(gzis);
+	    	 br = new BufferedReader(xover);
+	    	
+	    }catch(IOException ex){
+	       logger.error("Error al leer: "+ gzPath ,ex);
+	    }catch(Exception ex){
+	    	logger.error("Error al leer: "+ gzPath ,ex);
+	    }
+	   
+	     return br;
+	} 
+	
+	
+	public void closeGzipStream(BufferedReader br) throws IOException{
+		if(br!=null){
+			br.close();
+		}
+	}
 }

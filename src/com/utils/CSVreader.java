@@ -50,6 +50,35 @@ public class CSVreader {//csvutils
 	}
 	
 	
+	public ArrayList<String[]> readLines (BufferedReader br) throws IOException{
+		int i = 1;
+		int max = Configuration.getInstance().getMaxLines();  
+		valuesList = new  ArrayList<String[]>();
+		
+		logger.debug("Leyendo siguientes : " + max + " lineas");
+		
+		while ((currentLine = br.readLine()) != null && (i<max || max==0)) {
+			if(i==1){
+				logger.trace("primer linea de cada "+ max+" : " + currentLine);
+			}
+				
+			//currentLine=currentLine.replace("null", "");
+			String[] colValus = currentLine.split(splitBy,-1);
+			valuesList.add(colValus);
+			i++;
+		}
+		
+		if( currentLine!= null && !currentLine.isEmpty()){
+			String[] colValus = currentLine.split(splitBy,-1);
+			valuesList.add(colValus);
+		}
+				
+		logger.trace(currentLine);
+		return valuesList;
+	}
+	
+	
+	
 	public void closeFile (){
 		if(br!=null){
 			try {
