@@ -7,6 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 
@@ -20,6 +24,8 @@ public class CNTManager {
 	private String cntFilePath=Configuration.getInstance().getCntPath()+File.separator+cntName;
 	private static CNTManager instance;
 	private int cnt; 
+	private Date date;
+	private DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	
 	public static CNTManager getInstance(){
 		if(instance==null){
@@ -37,10 +43,14 @@ public class CNTManager {
 				try {
 					br = new BufferedReader(new FileReader(cntFile));
 					cnt=Integer.valueOf(br.readLine().trim());
+					date=df.parse(br.readLine());
+					
 					logger.debug("Valor encontrado:"+cnt);
 				} catch (FileNotFoundException e) {
 					logger.error("Error al leer cnt",e);
 				} catch (IOException e) {
+					logger.error("Error al leer cnt",e);
+				} catch (ParseException e) {
 					logger.error("Error al leer cnt",e);
 				}finally{
 					try {
@@ -64,6 +74,8 @@ public class CNTManager {
 			logger.debug("Actualizando cnt a: "+ cnt);
 			bw = new BufferedWriter(new FileWriter(cntFilePath));
 			bw.write(String.valueOf(cnt));
+			bw.write(String.valueOf(System.getProperty("line.separator")));
+			bw.write(df.format(new Date()));
 		} catch (IOException e) {
 			logger.error("Error al actualizar cnt",e);
 		}finally{
@@ -75,7 +87,34 @@ public class CNTManager {
 		}				
 	}
 	
+	public void updateCnt(int logid){
+		cnt =logid;
+		
+		BufferedWriter bw = null;
+		try {
+			logger.debug("Actualizando cnt a: "+ cnt);
+			bw = new BufferedWriter(new FileWriter(cntFilePath));
+			bw.write(String.valueOf(cnt));
+			bw.write(String.valueOf(System.getProperty("line.separator")));
+			bw.write(df.format(new Date()));
+		} catch (IOException e) {
+			logger.error("Error al actualizar cnt",e);
+		}finally{
+			try {
+				bw.close();
+			} catch (IOException e) {
+				logger.error("Error al actualizar cnt",e);
+			}			
+		}				
+	}
+	
+	
+	
 	public int getCnt(){
 		return cnt;
+	}
+	
+	public Date getDate(){
+		return date;
 	}
 }

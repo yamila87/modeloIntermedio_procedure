@@ -2,10 +2,14 @@ package com.procedureExecutor;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -34,10 +38,17 @@ public class Main {
 	private static ManifestParser parser;
 	private static GroupJsonUtils groupUtil;
 	
+	public static String CfgPath="config.json";
+	
 	public static void main(String[] args) {
 		 PropertyConfigurator.configure("logconfig.properties");
 		 logger.info("Iniciando proceso..");
 
+		 if(args.length>0){
+			 CfgPath = args[0];
+		 }
+		 
+		 
 		if(Configuration.getInstance()!=null){
 
 			groupUtil = new GroupJsonUtils();
@@ -51,7 +62,7 @@ public class Main {
 			logger.info("logid: " + CNTManager.getInstance().getCnt());
 			groupUtil.loadGroupJson();
 
-			loadManifeset();
+			loadManifests();
 
 			System.exit(0); 
 		}
@@ -62,7 +73,7 @@ public class Main {
 	}
 
 	
-	private static void loadManifeset(){
+	private static void loadManifest(){
 		logger.info("Obteniendo manifests...");
 		
 		String manifesetNext = "h_o_logId"+String.valueOf( CNTManager.getInstance().getCnt())+"_manifest.json"; 
@@ -92,6 +103,51 @@ public class Main {
 		}		
 	}
 	
+	
+	
+	
+	private static void loadManifests(){
+		logger.info("Obteniendo manifests...");
+		
+		
+		File[] list=Configuration.getInstance().getGzPathFile().listFiles(new FileFilter(){
+			public boolean accept (File file){
+				if(file.isFile() && file.getName().endsWith(".json")){
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		Collections.sort(Arrays.asList(list),new Comparator<File>() {
+
+			@Override
+			public int compare(File o1, File o2) {
+				return new Long(o1.lastModified()).compareTo(new Long(o2.lastModified()));
+			}
+			});
+		
+		JManifest manifest=null;
+		
+		for(File manifestFile : list){
+			logger.info("Leyendo archivo: " +manifestFile.getName());
+			
+			manifest = parser.getJSONManifest(manifestFile.getPath());		
+			
+			if(manifest.getLogIdMin()==CNTManager.getInstance().getCnt()){
+				
+				if(startLoadProcesStream(manifest)){
+					logger.info("finalizado con exito para logid:"+manifest.getLogIdMax());
+					
+					CNTManager.getInstance().updateCnt(manifest.getLogIdMax());
+				}else{
+					logger.error("finalizado con errores para logid: "+manifest.getLogIdMax());
+					break;
+				}
+			}
+		}
+	}
 
 	
 	private static boolean startLoadProcess (JManifest manifest){

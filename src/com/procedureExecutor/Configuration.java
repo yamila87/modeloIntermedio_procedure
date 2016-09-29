@@ -46,7 +46,7 @@ public class  Configuration {
 	
 	public static Configuration getInstance (){
 		if(instance==null){
-			String fileStr = "config.json";
+			String fileStr = Main.CfgPath;
 			Gson gson = new Gson ();		
 			BufferedReader br = null;
 			try {

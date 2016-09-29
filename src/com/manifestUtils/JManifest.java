@@ -31,7 +31,7 @@ public class JManifest {
 		return logIdMax;
 	}
 	public void setLogIdMax(String logIdMax) {
-		this.logIdMax = Integer.valueOf(logIdMax.trim());
+		this.logIdMax = Integer.valueOf(logIdMax.replace("\"", "").trim());
 	}
 	public int getLogIdMin() {
 		return logIdMin;
