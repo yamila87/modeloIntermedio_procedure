@@ -48,7 +48,7 @@ public class ProcedureCaller {
 	}
 	
 	
-	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg, int colGroupBy , String type) throws SQLException  {	
+	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg, int colGroupBy , String type, int id_lote) throws SQLException  {	
 		//callableStatement.setQueryTimeout(60); //segundos		
 		if(type!=null){		
 			arrDesc = ArrayDescriptor.createDescriptor(type.toUpperCase(), conn);
@@ -62,6 +62,7 @@ public class ProcedureCaller {
 			regQty++;
 			String[] reg = arrayColsByReg.get(i);	
 		
+
 			for(int j=0 ; j<reg.length;j++){
 			if(reg[j].equals("null")){
 					reg[j]="";
@@ -82,7 +83,10 @@ public class ProcedureCaller {
 					callableStatement.setString(j+1,reg[j]);
 				}
 			}
-
+			
+			int q = reg.length+1;
+			callableStatement.setString(q, String.valueOf(id_lote));
+			
 			logger.trace("Agregando Batch...");
 			callableStatement.addBatch();
 		}

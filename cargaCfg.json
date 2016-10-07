@@ -8,7 +8,7 @@
   "gzPath": "C:\\Users\\ysalomon\\git\\syncExtrea_carga_funciona\\var\\data\\certa_deltas_historic\\",
   "tmpPath": "\\tmp",
   "cntPath": "C:\\Users\\ysalomon\\git\\syncExtrea_carga_funciona\\var\\run",
-  "syncDeltaMax": 1,
+  "syncDeltaMax": 0,
   "groupFilePath":"C:\\Users\\ysalomon\\git\\syncExtrea_carga_funciona\\viz_mapa_integracion_batch_certa\\conf\\syncGroupBy.js",
   "maxLines": 900
 

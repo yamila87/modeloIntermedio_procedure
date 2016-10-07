@@ -61,26 +61,29 @@ public class GroupJsonUtils {
 	
 	public  int getGroupBy (String key,String[] cols){
 		int result = -1;
-		
-		if(gcfg.containsKey(key)){
-			String col = gcfg.get(key).getCampoResultado();
-			for(int i = cols.length-1 ; i>=0;i--){
-				if(cols[i].equals(col)){
-					result=i;
-					break;
-				}
-			}		
-		}
+		if(gcfg!=null){
+			if(gcfg.containsKey(key)){
+				String col = gcfg.get(key).getCampoResultado();
+				for(int i = cols.length-1 ; i>=0;i--){
+					if(cols[i].equals(col)){
+						result=i;
+						break;
+					}
+				}		
+			}
+		}	
 		return result;
 	}
 	
 	public String getResultType (String key){
-		if(gcfg.containsKey(key)){
-			return gcfg.get(key).getCampoResultadoTipo();
-		}else{
-			return null;
+		if(gcfg!=null){
+			if(gcfg.containsKey(key)){
+				return gcfg.get(key).getCampoResultadoTipo();
+			}else{
+				return null;
+			}
 		}
-		
+		return null;
 		
 	}
 	
