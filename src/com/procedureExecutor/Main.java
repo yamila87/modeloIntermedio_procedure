@@ -38,18 +38,20 @@ public class Main {
 	private static CSVreader reader;
 	private static ManifestParser parser;
 	private static GroupJsonUtils groupUtil;
-	
+	public static String logConfig="logconfig.properties";
 	public static String CfgPath="config.json";
 	
 	public static void main(String[] args) {
-		 PropertyConfigurator.configure("logconfig.properties");
-		 logger.info("Iniciando proceso..");
 
 		 if(args.length>0){
 			 CfgPath = args[0];
+			 logConfig =args[1];
+			
 		 }
 		 
-		 
+		 PropertyConfigurator.configure(logConfig);			
+		 logger.info("Iniciando proceso..");
+
 		if(Configuration.getInstance()!=null){
 			try{
 				groupUtil = new GroupJsonUtils();
@@ -71,7 +73,7 @@ public class Main {
 			}	
 		}
 		else {
-			logger.fatal("Error al cargar configuracion");
+			System.out.println("Error al cargar configuracion");
 			System.exit(-1);
 		}		
 	}
@@ -79,6 +81,7 @@ public class Main {
 	private static void loadManifests(){
 		logger.info("Obteniendo manifests...");
 		
+		logger.debug("Desde: " +Configuration.getInstance().getGzPathFile().getAbsolutePath() );
 		
 		File[] list=Configuration.getInstance().getGzPathFile().listFiles(new FileFilter(){
 			public boolean accept (File file){
@@ -89,6 +92,8 @@ public class Main {
 				}
 			}
 		});
+		
+		logger.debug("Lista encontrada cant:" + list.length);
 		
 		Collections.sort(Arrays.asList(list),new Comparator<File>() {
 

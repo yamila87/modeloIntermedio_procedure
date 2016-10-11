@@ -25,7 +25,7 @@ public class CNTManager {
 	private static CNTManager instance;
 	private int cnt; 
 	private Date date;
-	private DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	//2016-10-03 11:05:02
 
 	public static CNTManager getInstance(){

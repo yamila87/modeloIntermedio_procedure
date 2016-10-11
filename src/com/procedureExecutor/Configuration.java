@@ -152,6 +152,10 @@ public class  Configuration {
 		packageName = packageName+".";
 		customPackageName = customPackageName + ".";
 		
+		if(!gzPathFile.exists()){
+			logger.error("no existe el directorio: " + gzPathFile.getAbsolutePath());
+		}
+		
 		logger.debug("Directorios creados");
 	}
 }

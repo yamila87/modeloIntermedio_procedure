@@ -57,36 +57,45 @@ public class ProcedureCaller {
 		String [] strArr = null;
 
 		regQty = 0 ;
+		int lastPos=-1;
 		
 		for(int i=0;i<arrayColsByReg.size();i++){
 			regQty++;
 			String[] reg = arrayColsByReg.get(i);	
-		
-
+			
+			logger.trace("agrega lote id " + id_lote + "en pos " + 1);
+			callableStatement.setString(1, String.valueOf(id_lote));
+			lastPos=1;
 			for(int j=0 ; j<reg.length;j++){
-			if(reg[j].equals("null")){
+				lastPos++;
+				
+				if(reg[j].equals("null")){
 					reg[j]="";
 				}
 
 				if(j==colGroupBy){					
 					logger.trace("PARAM TO ARRAY:" + j +" Val: " + reg[j]);
+									
 					if(reg[j]!=null && !reg[j].isEmpty()){
+						
 						strArr = reg[j].split(",",-1);
+											
+						logger.trace("array to pass size " + strArr.length);
 						array_to_pass = new ARRAY(arrDesc,conn,strArr);
-						callableStatement.setArray(j+1, array_to_pass);
+						callableStatement.setArray(lastPos, array_to_pass);
 					}else{
-						callableStatement.setNull(j+1, java.sql.Types.ARRAY, type.toUpperCase());
+						logger.trace("Agrega array en null");
+						
+						callableStatement.setNull(lastPos, java.sql.Types.ARRAY, type.toUpperCase());
 					}	
 				}else{										
 					logger.trace("PARAM:" + j +" Val: " + reg[j]);
 									
-					callableStatement.setString(j+1,reg[j]);
+					callableStatement.setString(lastPos,reg[j]);
 				}
+
 			}
-			
-			int q = reg.length+1;
-			callableStatement.setString(q, String.valueOf(id_lote));
-			
+					
 			logger.trace("Agregando Batch...");
 			callableStatement.addBatch();
 		}
@@ -169,6 +178,8 @@ public class ProcedureCaller {
 						array_to_pass = new ARRAY(arrDesc,conn,strArr);
 						callableStatement.setArray(j+1, array_to_pass);
 					}else{
+						logger.trace("Agrega array en null");
+						
 						callableStatement.setNull(j+1, java.sql.Types.ARRAY, type.toUpperCase());
 					}	
 				}else{										
