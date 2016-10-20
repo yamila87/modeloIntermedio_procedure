@@ -4,11 +4,14 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
 
 import org.apache.log4j.Logger;
+
+import com.procedureExecutor.Main;
 
 public class ProcedureCaller {
 	final static Logger logger = Logger.getLogger(ProcedureCaller.class);
@@ -31,6 +34,7 @@ public class ProcedureCaller {
 	
 	public void setProcedureStringCaller (Connection conn,int paramsQty) throws SQLException{
 		//"{call custom_cv.geohub(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		// "{ call someStoredProc() }"
 		procedureStringCall = new StringBuilder();		
 		procedureStringCall.append("{call ").append(procedureName).append("(");
 		
@@ -50,59 +54,74 @@ public class ProcedureCaller {
 	
 	public void executeProcedure (Connection conn , ArrayList<String[]> arrayColsByReg, int colGroupBy , String type, int id_lote) throws SQLException  {	
 		//callableStatement.setQueryTimeout(60); //segundos		
-		if(type!=null){		
-			arrDesc = ArrayDescriptor.createDescriptor(type.toUpperCase(), conn);
-		}
+			String[] reg=null;
 		
-		String [] strArr = null;
-
-		regQty = 0 ;
-		int lastPos=-1;
-		
-		for(int i=0;i<arrayColsByReg.size();i++){
-			regQty++;
-			String[] reg = arrayColsByReg.get(i);	
-			
-			logger.trace("agrega lote id " + id_lote + "en pos " + 1);
-			callableStatement.setString(1, String.valueOf(id_lote));
-			lastPos=1;
-			for(int j=0 ; j<reg.length;j++){
-				lastPos++;
+			try {
+				if(type!=null){		
+					arrDesc = ArrayDescriptor.createDescriptor(type.toUpperCase(), conn);
+				}
 				
-				if(reg[j].equals("null")){
-					reg[j]="";
-				}
+				String [] strArr = null;
 
-				if(j==colGroupBy){					
-					logger.trace("PARAM TO ARRAY:" + j +" Val: " + reg[j]);
-									
-					if(reg[j]!=null && !reg[j].isEmpty()){
-						
-						strArr = reg[j].split(",",-1);
-											
-						logger.trace("array to pass size " + strArr.length);
-						array_to_pass = new ARRAY(arrDesc,conn,strArr);
-						callableStatement.setArray(lastPos, array_to_pass);
-					}else{
-						logger.trace("Agrega array en null");
-						
-						callableStatement.setNull(lastPos, java.sql.Types.ARRAY, type.toUpperCase());
-					}	
-				}else{										
-					logger.trace("PARAM:" + j +" Val: " + reg[j]);
-									
-					callableStatement.setString(lastPos,reg[j]);
-				}
-
-			}
+				regQty = 0 ;
+				int lastPos=-1;
+				
+				for(int i=0;i<arrayColsByReg.size();i++){
+					regQty++;
+					reg = arrayColsByReg.get(i);	
 					
-			logger.trace("Agregando Batch...");
-			callableStatement.addBatch();
-		}
+					logger.trace("agrega lote id " + id_lote + "en pos " + 1);
+					callableStatement.setString(1, String.valueOf(id_lote));
+					lastPos=1;
+					for(int j=0 ; j<reg.length;j++){
+						lastPos++;
+						
+						if(reg[j].equals("null")){
+							reg[j]="";
+						}
 
-		logger.debug("Ejecutando proceso " + procedureName);
-		callableStatement.executeBatch();
-		logger.debug("ejecucion finalizada " + procedureName);
+						if(j==colGroupBy){					
+							logger.trace("PARAM TO ARRAY:" + j +" Val: " + reg[j]);
+											
+							if(reg[j]!=null && !reg[j].isEmpty()){
+								
+								strArr = reg[j].split(",",-1);
+													
+								logger.trace("array to pass size " + strArr.length);
+								array_to_pass = new ARRAY(arrDesc,conn,strArr);
+								callableStatement.setArray(lastPos, array_to_pass);
+							}else{
+								logger.trace("Agrega array en null");
+								
+								callableStatement.setNull(lastPos, java.sql.Types.ARRAY, type.toUpperCase());
+							}	
+						}else{										
+							logger.trace("PARAM:" + j +" Val: " + reg[j]);
+											
+							callableStatement.setString(lastPos,reg[j]);
+						}
+
+					}
+							
+					logger.trace("Agregando Batch...");
+					callableStatement.addBatch();
+				}
+
+				logger.debug("Ejecutando proceso " + procedureName);
+				callableStatement.executeBatch();
+				logger.debug("ejecucion finalizada " + procedureName);
+			} catch (SQLException e) {
+				logger.error("Error ejecutando proceso: " + procedureName);
+				logger.error("Bloque ini:" + Arrays.toString(arrayColsByReg.get(0)));
+				logger.error("Bloque fin:" + Arrays.toString(arrayColsByReg.get(arrayColsByReg.size()-1)));
+				
+				for(String [] strArr :arrayColsByReg){
+					Main.str.append(Arrays.toString(strArr));
+					Main.str.append(System.getProperty("line.separator"));
+				}
+				
+				throw e;
+			}
 	}
 	
 

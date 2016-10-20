@@ -1,8 +1,10 @@
 package com.procedureExecutor;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -40,9 +42,13 @@ public class Main {
 	private static GroupJsonUtils groupUtil;
 	public static String logConfig="logconfig.properties";
 	public static String CfgPath="config.json";
-	
+	public static String fileErr="";
+	public static StringBuilder str;
+	public static boolean errLote;
 	public static void main(String[] args) {
-
+		str = new StringBuilder();  //para que guarde el bloque de datos que dio error asi no hay que recorrer el archivo a mano
+		errLote=false;; //para que no genere el archivo err en caso de que no encuentre un loteid nuevo
+		
 		 if(args.length>0){
 			 CfgPath = args[0];
 			 logConfig =args[1];
@@ -60,11 +66,12 @@ public class Main {
 				unzziper = new GZunzipper();
 				reader = new CSVreader();
 				parser = new ManifestParser();
-			
+				
 				CNTManager.getInstance().readCnt();			
 				logger.info("logid: " + CNTManager.getInstance().getCnt());
 				groupUtil.loadGroupJson();
 	
+				fileErr =Configuration.getInstance().getCntPath()+File.separator+"err";
 				loadManifests();
 	
 				System.exit(0);
@@ -79,52 +86,66 @@ public class Main {
 	}
 	
 	private static void loadManifests(){
-		logger.info("Obteniendo manifests...");
-		
+		logger.info("Obteniendo manifests...");		
 		logger.debug("Desde: " +Configuration.getInstance().getGzPathFile().getAbsolutePath() );
 		
-		File[] list=Configuration.getInstance().getGzPathFile().listFiles(new FileFilter(){
-			public boolean accept (File file){
-				if(file.isFile() && file.getName().endsWith(".json")){
-					return true;
-				}else{
-					return false;
-				}
-			}
-		});
-		
-		logger.debug("Lista encontrada cant:" + list.length);
-		
-		Collections.sort(Arrays.asList(list),new Comparator<File>() {
+		if (!new File(fileErr).exists()) {
+			File[] list = Configuration.getInstance().getGzPathFile()
+					.listFiles(new FileFilter() {
+						public boolean accept(File file) {
+							if (file.isFile()
+									&& file.getName().endsWith(".json")) {
+								return true;
+							} else {
+								return false;
+							}
+						}
+					});
+			logger.debug("Lista encontrada cant:" + list.length);
+			Collections.sort(Arrays.asList(list), new Comparator<File>() {
 
-			@Override
-			public int compare(File o1, File o2) {
-				return new Long(o1.lastModified()).compareTo(new Long(o2.lastModified()));
-			}
+				@Override
+				public int compare(File o1, File o2) {
+					return new Long(o1.lastModified()).compareTo(new Long(o2
+							.lastModified()));
+				}
 			});
-		
-		JManifest manifest=null;
-		boolean finded=false;
-		for(File manifestFile : list){
-			logger.info("Leyendo archivo: " +manifestFile.getName());
-			
-			manifest = parser.getJSONManifest(manifestFile.getPath());	
-			
-			if(manifest.getLogIdMin()==CNTManager.getInstance().getCnt()){
-				finded=true;
-				if(startLoadProcesStream(manifest)){
-					logger.info("finalizado con exito para logid:"+manifest.getLogIdMax());
-					
-					CNTManager.getInstance().updateCnt(manifest.getLogIdMax());
-				}else{
-					logger.error("finalizado con errores para logid: "+manifest.getLogIdMax());
-					break;
+			JManifest manifest = null;
+			boolean finded = false;
+			for (File manifestFile : list) {
+				logger.info("Leyendo archivo: " + manifestFile.getName());
+
+				manifest = parser.getJSONManifest(manifestFile.getPath());
+
+				if (manifest.getLogIdMin() == CNTManager.getInstance().getCnt()) {
+					finded = true;
+					if (startLoadProcesStream(manifest)) {
+						if(!errLote){
+							logger.info("finalizado con exito para logid:"
+									+ manifest.getLogIdMax());
+	
+							CNTManager.getInstance().updateCnt(
+									manifest.getLogIdMax());
+						}	
+					} else {
+						logger.error("finalizado con errores para logid: "
+								+ manifest.getLogIdMax());
+						try {
+							BufferedWriter bw = new BufferedWriter(new FileWriter(new File(fileErr)));
+							bw.write(str.toString());
+							bw.close();
+						} catch (IOException e) {
+							logger.error("ERROR al crear err file", e);
+						}
+						break;
+					}
 				}
 			}
-		}
-		
-		if(!finded){
-			logger.error("No se encontraron actualizaciones ");
+			if (!finded) {
+				logger.info("No se encontraron actualizaciones ");
+			}
+		}else{
+			logger.error("Se encontro un error previo, no se puede continuar");
 		}
 	}
 
@@ -169,9 +190,8 @@ public class Main {
 				
 				String  queryFinal = "Select id from ("+query.toString()+") where rownum=1";				
 				ResultSet rs = conn.createStatement().executeQuery(queryFinal);							
-				//
+				
 				if(rs.next()){
-					
 					lote_id =rs.getInt("id");
 					logger.info("iniciando lote:"+lote_id);
 					beforeManifest =  java.lang.System.currentTimeMillis();
@@ -265,6 +285,8 @@ public class Main {
 					loggerTime.info("Tiempo para manifest:" + (afterManifest-beforeManifest));
 				}else{
 					logger.info("No se encontro lote nuevo");
+					errLote=true;
+					//result=false;
 				}	
 					
 			}
